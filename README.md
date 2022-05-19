@@ -9,7 +9,7 @@ Special Thanks to the following Libarys/Companys:
 - [Typescript](https://www.typescriptlang.org "Typescript") - Makes things better and more stable :D
 - [Ant Design](https://ant.design "Ant Design") - Component library of choice
 - [Axios](https://axios-http.com "Axios") - Making HTTP(s) request a lot easier
-- [Loadash](https://lodash.com "Lodash") - Debouncing search input
+- [Lodash](https://lodash.com "Lodash") - Debouncing search input
 
 ## Building yourself
 
