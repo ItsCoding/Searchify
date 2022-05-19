@@ -37,9 +37,10 @@ const Login: React.FunctionComponent<LoginProps> = ({ fqdn, stateKey }) => {
     const state = makeid(100);
     localStorage.setItem(stateKey, state);
 
+
+    // user-read-email \
     const scope =
     "streaming \
-            user-read-email \
             user-read-private \
             user-read-playback-state \
             user-modify-playback-state \

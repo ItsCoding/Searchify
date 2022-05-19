@@ -119,7 +119,7 @@ const RecomendationOption = ({ option, changeOption }: RecomendationOptionProps)
         size="small"
         title={
           <>
-            <Tooltip placement="top" title={recomendationHelps[option]}>
+            <Tooltip placement="top" title={<p>{recomendationHelps[option]} - <a href="https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations" rel="noreferrer" target={"_blank"}>Spotify</a></p>}>
               {option.charAt(0).toUpperCase() +
                 option.slice(1).replace("_", " ")}
             </Tooltip>
