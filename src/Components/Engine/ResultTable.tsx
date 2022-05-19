@@ -63,7 +63,7 @@ const ResultTable = ({
         }
       )
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
       });
   };
 
@@ -79,7 +79,7 @@ const ResultTable = ({
         Authorization: "Bearer " + token,
       },
     }).then((result) => {
-      console.log(result.data);
+      // console.log(result.data);
       message.success("Added to queue!");
     });
   };
@@ -194,7 +194,7 @@ const ResultTable = ({
   ];
 
   const addTrackToSeeds = (track: TrackItem) => {
-    console.log(track);
+    // console.log(track);
     const newSeed: SeedItem = {
       value: track.title + " - " + track.artists,
       spotifyseed: track.uri,

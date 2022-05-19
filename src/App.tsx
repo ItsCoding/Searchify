@@ -45,7 +45,7 @@ function App() {
             duration: 0
           });
         }, parseInt(urlParams.get("expires_in") ?? "0") * 1000);
-        window.history.pushState("", "", '/');
+        window.history.pushState("", "", process.env.REACT_APP_LIVE_URI);
       }else{
         message.error("Please refresh this page and try again. If this error persists, please contact the developer.");
       }

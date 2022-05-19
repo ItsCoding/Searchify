@@ -260,7 +260,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
         )
         .then((result) => {
           const res = result.data[Object.keys(result.data)[0]].items;
-          console.log("Got Result from Spotify", res);
+          // console.log("Got Result from Spotify", res);
           resolve(res);
         });
     });
@@ -279,7 +279,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
         )
         .then((result) => {
           const res = result.data[Object.keys(result.data)[0]].items;
-          console.log("Got Result from Spotify", res);
+          // console.log("Got Result from Spotify", res);
           resolve(res);
         });
     });
@@ -338,7 +338,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
    */
   const onSelect = (value: string, option: any) => {
     const seedOption: SeedItem = option;
-    console.log(value, seedOption, "OPTION DEBUG");
+    // console.log(value, seedOption, "OPTION DEBUG");
     if (selectedSeeds.length < 5) {
       if (!selectedSeeds.find((seed) => seed.key === seedOption.key)) {
         setSelectedSeeds([...selectedSeeds, seedOption]);

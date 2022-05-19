@@ -85,7 +85,7 @@ const Engine = ({ token }: EngineProps) => {
   const handleSearch = () => {
     setSearching(true);
     console.log("Searching...");
-    console.log(generateSeedQuery(), generateOptions());
+    // console.log(generateSeedQuery(), generateOptions());
     axios
       .get(
         "https://api.spotify.com/v1/recommendations" +
@@ -99,7 +99,7 @@ const Engine = ({ token }: EngineProps) => {
         }
       )
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
 
         const mappedResult: Array<TrackItem> = result.data.tracks.map((track: SpotifyTrack) => {
           const mappedTrack: TrackItem = {
@@ -119,7 +119,7 @@ const Engine = ({ token }: EngineProps) => {
         const featuresQuery = mappedResult
           .map((track) => track.uri.split(":")[2])
           .join(",");
-        console.log("Features Query: ", featuresQuery);
+        // console.log("Features Query: ", featuresQuery);
         axios
           .get(
             "https://api.spotify.com/v1/audio-features?ids=" + featuresQuery,
@@ -131,7 +131,7 @@ const Engine = ({ token }: EngineProps) => {
           )
           .then((result) => {
             const sDetails: Array<SpotifyAudioAnalysis> = result.data.audio_features;
-            console.log("Audio Features: ", sDetails);
+            // console.log("Audio Features: ", sDetails);
             let i = 0;
             sDetails.forEach((audioFeature) => {
               const track = mappedResult.find((t) => t.uri === audioFeature.uri);
@@ -143,7 +143,7 @@ const Engine = ({ token }: EngineProps) => {
                   if (key !== "key") track[key] = audioFeature[key];
                 });
                 i++;
-                console.log(i, track.name, track.key, track.tempo, audioFeature);
+                // console.log(i, track.name, track.key, track.tempo, audioFeature);
               }
             });
             setSearching(false);
