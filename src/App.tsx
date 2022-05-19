@@ -11,7 +11,7 @@ const stateKey = "spotify_auth_state-x43kdwe3ay";
 const fqdn: string =
   !process.env.NODE_ENV || process.env.NODE_ENV === "development"
     ? "http://localhost:3000"
-    : process.env.LIVE_URI ?? "";
+    : process.env.REACT_APP_LIVE_URI ?? "";
 
 /**
  * It returns a PageHeader component from Ant Design

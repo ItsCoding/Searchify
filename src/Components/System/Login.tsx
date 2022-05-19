@@ -30,7 +30,7 @@ const Login: React.FunctionComponent<LoginProps> = ({ fqdn, stateKey }) => {
    */
 
   const redirectToSpotify = () => {
-    const client_id = process.env.SPOTIFY_CLIENT_KEY;
+    const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_KEY;
     const redirect_uri = fqdn;
 
     //Create a state and store it localy, so we can validate spotifys resposnse it later.
