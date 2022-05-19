@@ -336,7 +336,6 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
    * @param value - The value of the selected option.
    * @param option - the option that was selected
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSelect = (value: string, option: any) => {
     const seedOption: SeedItem = option;
     console.log(value, seedOption, "OPTION DEBUG");
