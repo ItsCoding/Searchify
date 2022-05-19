@@ -37,8 +37,7 @@ const Login: React.FunctionComponent<LoginProps> = ({ fqdn, stateKey }) => {
     const state = makeid(100);
     localStorage.setItem(stateKey, state);
 
-
-    // user-read-email \
+    //Declare OAuth scopes we need for spotify
     const scope =
     "streaming \
             user-read-private \

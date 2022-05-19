@@ -1,10 +1,10 @@
 import React, { useState, Dispatch, ReactNode } from "react";
 import { Row, Form, Col, Card, Checkbox, Slider, Tooltip } from "antd";
 import PitchClass from "../../System/PitchClass";
-import Help from "../../System/Help";
+import { recomendationHelps } from "../../System/Help";
 import { RecommendationOption, RecommendationOptions } from "../../Types/RecommendationOptions";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-const recomendationHelps = Help.recomendationHelps;
+// const recomendationHelps = Help.recomendationHelps;
 
 /* A list of all the options that can be used to filter the recomendations. */
 const recomendationOptions = [
@@ -34,7 +34,7 @@ type recommendationSpecials = {
 }
 
 const defaultFormatter = (s: number | undefined) => {
-  if(s === undefined) {
+  if (s === undefined) {
     return "undefined"
   }
   return s;

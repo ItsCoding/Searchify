@@ -1,16 +1,13 @@
 import React from "react";
 import { Tooltip } from "antd";
 
-/* An object that contains the help text for each audio feature. */
 type RecomendationHelps = {
   [option: string]: string | React.ReactNode;
 }
 
-
-// const keyHelp: React.ReactElement = 
-
 //All help Texts are from Spotifys own description of the audio features.
-const recomendationHelps: RecomendationHelps = {
+// An object that contains the help text for each audio feature. 
+export const recomendationHelps: RecomendationHelps = {
   acousticness:
     "A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic.",
   danceability:
@@ -43,6 +40,8 @@ const recomendationHelps: RecomendationHelps = {
   valence:
     "A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).",
 };
+
+
 /**
  * It takes a title and a key, and returns a tooltip with the title and the help text from the
  * recomendationHelps object
@@ -51,8 +50,7 @@ const recomendationHelps: RecomendationHelps = {
  * @returns A React component that displays a tooltip with the title of the column and the help text
  * for that column.
  */
-
-const mapTitleToHelp = (title: string, key: string | null = null) => {
+export const mapTitleToHelp = (title: string, key: string | null = null) => {
   return (
     <>
       {" "}
@@ -63,9 +61,4 @@ const mapTitleToHelp = (title: string, key: string | null = null) => {
   );
 };
 
-const Help = {
-  recomendationHelps,
-  mapTitleToHelp
-};
 
-export default Help;

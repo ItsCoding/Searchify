@@ -243,7 +243,7 @@ const Engine = ({ token }: EngineProps) => {
                     syncExternalDevice={true}
                     autoPlay={true}
                     name={"Searchify - WebPlayer"}
-                    syncExternalDeviceInterval={1}
+                    syncExternalDeviceInterval={10}
                     // uris={playSong}
                     styles={{
                       // height: 120,

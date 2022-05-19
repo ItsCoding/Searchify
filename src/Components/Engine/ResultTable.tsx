@@ -9,9 +9,9 @@ import {
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import PitchClass from "../../System/PitchClass";
-import Help from "../../System/Help";
+import { mapTitleToHelp } from "../../System/Help";
 import { Dispatch } from "react";
-import {SeedItem, SeedType} from "../../Types/SeedItem";
+import { SeedItem, SeedType } from "../../Types/SeedItem";
 import TrackItem from "../../Types/TrackItem";
 
 /**
@@ -129,7 +129,7 @@ const ResultTable = ({
       render: (d: string, r: TrackItem) => millisToMinutesAndSeconds(r.duration),
     },
     {
-      title: Help.mapTitleToHelp("Tempo"),
+      title: mapTitleToHelp("Tempo"),
       dataIndex: "tempo",
       key: "tempo",
       render: (s: number) => (s ? s.toFixed(2) + " BPM" : "-"),
@@ -140,7 +140,7 @@ const ResultTable = ({
       },
     },
     {
-      title: Help.mapTitleToHelp("Key"),
+      title: mapTitleToHelp("Key"),
       dataIndex: "toneKey",
       key: "toneKey",
       render: (s: number) => PitchClass.keyToPitchClass(s),
@@ -150,14 +150,14 @@ const ResultTable = ({
       },
     },
     {
-      title: Help.mapTitleToHelp("Time signature", "time_signature"),
+      title: mapTitleToHelp("Time signature", "time_signature"),
       dataIndex: "time_signature",
       key: "time_signature",
       render: (s: string) => (s ? s + "" : "-"),
       sorter: (a: TrackItem, b: TrackItem) => (a.time_signature ?? 0) - (b.time_signature ?? 0),
     },
     {
-      title: Help.mapTitleToHelp("Mode"),
+      title: mapTitleToHelp("Mode"),
       dataIndex: "mode",
       key: "mode",
       render: (s: number) => (s === 1 ? "Major" : "Minor"),

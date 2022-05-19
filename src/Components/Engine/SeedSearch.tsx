@@ -3,14 +3,12 @@ import {
   AutoComplete,
   message,
 } from "antd";
-import React, { Dispatch, SetStateAction, useState } from "react";
-// import { UserOutlined } from "@ant-design/icons";
+import React, { Dispatch, SetStateAction, useState, useCallback } from "react";
 import axios from "axios";
-// import TrackDetails from "./TrackDetails";
-// import TrackItem from "../../Types/TrackItem";
 import SpotifyTrack from "../../Types/SpotifyTrack";
 import SpotifyArtist from "../../Types/SpotifyArtist";
 import { SeedItem } from "../../Types/SeedItem";
+import debounce from 'lodash.debounce';
 const renderTitle = (title: string) => <span>{title}</span>;
 
 /* A list of genres that are used to search for songs. */
@@ -142,7 +140,6 @@ const genres = [
   "work-out",
   "world-music",
 ];
-
 const renderGenre = (title: string) => ({
   value: title.charAt(0).toUpperCase() + title.slice(1),
   spotifyseed: title,
@@ -221,15 +218,6 @@ type SeedSearchProps = {
   selectedSeeds: SeedItem[]
 }
 
-// type GenreOption = {
-
-//   value: string;
-//   spotifyseed: string;
-//   key: string;
-//   type: string;
-//   label: JSX.Element;
-// }
-
 type SearchOption = {
   label: JSX.Element,
   options: Array<SeedItem>
@@ -237,8 +225,6 @@ type SearchOption = {
 
 const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps) => {
   const [options, setOptions] = useState<SearchOption[]>([]);
-
-  // const [selectedSeeds, setSelectedSeeds] = useState([]);
 
   /**
    * It takes a search term and a type of search (artist, album, track, playlist) and returns a promise
@@ -330,6 +316,11 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
     setOptions(opts);
   };
 
+
+  const debouncedChangeHandler = useCallback(
+    debounce(getSearchOptions, 500)
+    , []);
+
   /**
    * If the user has selected less than 5 seeds, and the seed they are trying to select is not already
    * in the selectedSeeds array, then add the seed to the selectedSeeds array
@@ -351,76 +342,6 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
     }
   };
 
-  /**
-   * It takes a string as an argument and returns a color based on the string
-   * @param type - The type of the search result. Can be track, artist, or genre.
-   * @returns the color of the badge based on the type of the badge.
-   */
-  // const getBadgeColor = (type) => {
-  //   switch (type) {
-  //     case "track":
-  //       return "#27ae60";
-  //     case "artist":
-  //       return "#2980b9";
-  //     case "genre":
-  //       return "#8e44ad";
-  //     default:
-  //       return "#34495e";
-  //   }
-  // };
-
-  // const SeedBadge = ({ seed }) => {
-  //   const [visible, setVisible] = useState(false);
-  //   const removeSelf = () => {
-  //     const newSeeds = selectedSeeds.filter(
-  //       (s) => s.spotifyseed !== seed.spotifyseed
-  //     );
-  //     setSelectedSeeds(newSeeds);
-  //     // setSeed(newSeeds);
-  //   };
-
-  //   return (
-  //     <>
-  //       {/* <Badge
-  //         key={seed.spotifyseed + "-badge"}
-  //         style={{ marginRight: 5, backgroundColor: getBadgeColor(seed.type) }}
-  //         onClick={() => setVisible(true)}
-  //         count={seed.value}
-  //       /> */}
-  //       <Modal
-  //         title={seed.value}
-  //         centered
-  //         visible={visible}
-  //         onOk={() => setVisible(false)}
-  //         onCancel={() => setVisible(false)}
-  //         width={1000}
-  //         footer={[
-  //           <Button key="submit" danger onClick={removeSelf}>
-  //             Delete
-  //           </Button>,
-  //           <Button type="primary" onClick={() => setVisible(false)}>
-  //             Ok
-  //           </Button>,
-  //         ]}
-  //       >
-  //         {seed.spotifyseed.includes("spotify:") ? (
-  //           <TrackDetails token={token} record={{ uri: seed.spotifyseed }} />
-  //         ) : (
-  //           <Result status="warning" title="Genres cant have audio features" />
-  //         )}
-  //       </Modal>
-  //     </>
-  //   );
-  // };
-
-  // const SeedBadges = () => (
-  //   <>
-  //     {selectedSeeds.map((seed) => (
-  //       <SeedBadge seed={seed} />
-  //     ))}
-  //   </>
-  // );
-
   return (
     <AutoComplete
       dropdownClassName="certain-category-search-dropdown"
@@ -429,7 +350,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
       onSelect={onSelect}
     >
       <Input
-        onChange={(e) => getSearchOptions(encodeURIComponent(e.target.value))}
+        onChange={(e) => debouncedChangeHandler(encodeURIComponent(e.target.value))}
         placeholder="Track,Gerne,Artist..."
         style={{ width: 330, zIndex: 100 }}
       />

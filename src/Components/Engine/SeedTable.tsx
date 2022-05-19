@@ -5,7 +5,7 @@ import axios from "axios";
 
 import PitchClass from "../../System/PitchClass";
 import { DeleteOutlined } from "@ant-design/icons";
-import Help from "../../System/Help";
+import { mapTitleToHelp } from "../../System/Help";
 import { SeedItem } from "../../Types/SeedItem";
 import SeedDetailItem from "../../Types/SeedDetailItem";
 
@@ -104,13 +104,13 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
       ),
     },
     {
-      title: Help.mapTitleToHelp("Key"),
+      title: mapTitleToHelp("Key"),
       dataIndex: "key",
       key: "key",
       render: (s: number) => (s ? PitchClass.keyToPitchClass(s) : "-"),
     },
     {
-      title: Help.mapTitleToHelp("Mode"),
+      title: mapTitleToHelp("Mode"),
       dataIndex: "mode",
       key: "mode",
       render: (s: number, r: SeedDetailItem) =>
@@ -121,13 +121,13 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
           : "-",
     },
     {
-      title: Help.mapTitleToHelp("Tempo"),
+      title: mapTitleToHelp("Tempo"),
       dataIndex: "tempo",
       key: "tempo",
       render: (s: number) => (s ? s + " BPM" : "-"),
     },
     {
-      title: Help.mapTitleToHelp("Time signature", "time_signature"),
+      title: mapTitleToHelp("Time signature", "time_signature"),
       dataIndex: "time_signature",
       key: "time_signature",
       render: (s: number) => (s ? s + " beats/bar" : "-"),
