@@ -193,8 +193,11 @@ const ResultTable = ({
     },
   ];
 
+  /**
+   * Adds a track to the seeds array
+   * @param track - the track you want to add to the seeds array
+   **/
   const addTrackToSeeds = (track: TrackItem) => {
-    // console.log(track);
     const newSeed: SeedItem = {
       value: track.title + " - " + track.artists,
       spotifyseed: track.uri,
@@ -224,29 +227,19 @@ const ResultTable = ({
       onRow={(record: TrackItem) => {
         return {
           onMouseEnter: () => {
-            // console.log("Mouse Enter", rowIndex)
             setTableDetail((prev) => {
-              // console.log([...prev, record])
-              return [...prev, record];
+
+              //loose reference to the object so we can update it
+              let recordCopy = {
+                ...record,
+              }
+              recordCopy.fromHover = true;
+              recordCopy.title = recordCopy.title + " - " + recordCopy.artists;
+              return [...prev.filter((s) => !s.fromHover), recordCopy];
             });
-          }, // mouse enter row
-          onMouseLeave: () => {
-            // console.log("Mouse Leave", rowIndex)
-            setTableDetail((prev) => {
-              return prev.filter((s) => s.uri !== record.uri);
-            });
-          }, // mouse leave row
+          }
         };
       }}
-    // expandable={{
-    //   expandedRowRender: (record) => (
-    //     <TrackDetails
-    //       record={record}
-    //       token={token}
-    //       key={record.key + "-details"}
-    //     />
-    //   ),
-    // }}
     />
   );
 };

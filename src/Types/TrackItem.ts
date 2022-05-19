@@ -14,6 +14,7 @@ type TrackItem = {
     mode?: number,
     tempo?: number,
     time_signature?: number,
+    fromHover?: boolean,
     [key: string]: string | number | boolean | undefined;
 }
 
