@@ -4,6 +4,8 @@ import Engine from "./Components/Engine/Engine";
 import { PageHeader, message, notification } from "antd";
 import "./App.css";
 import "antd/dist/antd.dark.min.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 const stateKey = "spotify_auth_state-x43kdwe3ay";
 
@@ -30,12 +32,12 @@ const Header = () => {
 function App() {
   const [token, setToken] = useState("");
 
-/* Get the token from spotify and start the valdation timeout */
+  /* Get the token from spotify and start the valdation timeout */
   useEffect(() => {
     const queryString = window.location.href.split("#")[1];
     const urlParams = new URLSearchParams(queryString);
-    if(urlParams.has("access_token")){
-      if(urlParams.get("state") === localStorage.getItem(stateKey)){
+    if (urlParams.has("access_token")) {
+      if (urlParams.get("state") === localStorage.getItem(stateKey)) {
         setToken(urlParams.get("access_token") ?? "");
         setTimeout(() => {
           console.log("Key expired!")
@@ -46,7 +48,7 @@ function App() {
           });
         }, parseInt(urlParams.get("expires_in") ?? "0") * 1000);
         window.history.pushState("", "", fqdn);
-      }else{
+      } else {
         message.error("Please refresh this page and try again. If this error persists, please contact the developer.");
       }
     }
@@ -69,7 +71,10 @@ function App() {
               paddingTop: 15,
             }}
           >
-            <p>Coded with ❤</p>
+            <p>Coded with ❤</p> <small style={{ color: "#545454" }}>
+              metadata provided by <FontAwesomeIcon icon={faSpotify} size={"lg"} />
+              {/* <img style={{ height: 15, marginLeft: 5 }} src="Spotify_Logo_CMYK_White.png"></img> */}
+            </small>
           </div>
         </>
       )}
