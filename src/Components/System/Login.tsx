@@ -1,5 +1,7 @@
 import React from "react";
 import { Result, Button } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 type LoginProps = {
   fqdn: string,
@@ -39,7 +41,7 @@ const Login: React.FunctionComponent<LoginProps> = ({ fqdn, stateKey }) => {
 
     //Declare OAuth scopes we need for spotify
     const scope =
-    "streaming \
+      "streaming \
             user-read-private \
             user-read-playback-state \
             user-modify-playback-state \
@@ -67,8 +69,9 @@ const Login: React.FunctionComponent<LoginProps> = ({ fqdn, stateKey }) => {
               key="console"
               // href={fqdn + "/auth/login"}
               onClick={() => redirectToSpotify()}
-              >
-              Login with Spotify
+              style={{backgroundColor: "#1DB954", borderColor: "#1DB954"}}
+            >
+              Login with Spotify  <FontAwesomeIcon icon={faSpotify} size={"1x"} style={{marginLeft: 5}} />
             </Button>
           }
         />

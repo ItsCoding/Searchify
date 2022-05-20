@@ -163,6 +163,7 @@ const renderTrack = (track: SpotifyTrack) => ({
   spotifyseed: track.uri,
   key: track.uri,
   type: "track",
+  uri: track.external_urls.spotify,
   sthumb: track.album.images[2].url,
   label: (
     <div
@@ -192,6 +193,7 @@ const renderArtist = (artist: SpotifyArtist) => ({
   key: artist.uri,
   type: "artist",
   sthumb: artist.images[2].url,
+  uri: artist.external_urls.spotify,
   label: (
     <div
       style={{
@@ -246,7 +248,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
         )
         .then((result) => {
           const res = result.data[Object.keys(result.data)[0]].items;
-          // console.log("Got Result from Spotify", res);
+          console.log("Got Result from Spotify ARTISTS", res);
           resolve(res);
         });
     });
@@ -265,7 +267,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
         )
         .then((result) => {
           const res = result.data[Object.keys(result.data)[0]].items;
-          // console.log("Got Result from Spotify", res);
+          console.log("Got Result from Spotify TRACKS", res);
           resolve(res);
         });
     });

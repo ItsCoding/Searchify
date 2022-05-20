@@ -10,6 +10,7 @@ Special Thanks to the following Libarys/Companys:
 - [Ant Design](https://ant.design "Ant Design") - Component library of choice
 - [Axios](https://axios-http.com "Axios") - Making HTTP(s) request a lot easier
 - [Lodash](https://lodash.com "Lodash") - Debouncing search input
+- [Fontawsome](https://fontawesome.com "Fontawsome") - Icon libary
 
 ## Building yourself
 

@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useEffect } from "react";
-import { Table, Badge } from "antd";
+import { Table, Badge, Space } from "antd";
 import axios from "axios";
 
 import PitchClass from "../../System/PitchClass";
@@ -8,6 +8,9 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { mapTitleToHelp } from "../../System/Help";
 import { SeedItem } from "../../Types/SeedItem";
 import SeedDetailItem from "../../Types/SeedDetailItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 
 const seedColors = ["#6ab04c", "#eb4d4b", "#4834d4", "#be2edd", "#f0932b"];
@@ -136,11 +139,15 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
       title: "#",
       key: "actions",
       render: (s: string, record: SeedDetailItem) => (
-        <>
+        <Space>
           <a>
-            <DeleteOutlined onClick={() => removeSelf(record)} />
+            <FontAwesomeIcon icon={faTrash} size={"lg"} onClick={() => removeSelf(record)} />
+            {/* <DeleteOutlined  /> */}
           </a>
-        </>
+          <a href={record.uri} target="_blank" rel="noreferrer" style={{ color: "#1DB954" }}>
+            <FontAwesomeIcon icon={faSpotify} size={"lg"} />
+          </a>
+        </Space>
       ),
     }
   ];

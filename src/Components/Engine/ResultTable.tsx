@@ -13,6 +13,11 @@ import { mapTitleToHelp } from "../../System/Help";
 import { Dispatch } from "react";
 import { SeedItem, SeedType } from "../../Types/SeedItem";
 import TrackItem from "../../Types/TrackItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { brands } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { faPlusCircle, faPlay, faBarsStaggered } from "@fortawesome/free-solid-svg-icons";
+
 
 /**
  * It takes a number of milliseconds and returns a string in the format of minutes:seconds.
@@ -170,24 +175,30 @@ const ResultTable = ({
         <Space size="middle">
           <Tooltip placement="top" title={"Play track"}>
             <a onClick={() => playSong(record.uri)}>
-              <PlayCircleOutlined style={{ fontSize: "18px" }} />
+              {/* <PlayCircleOutlined style={{ fontSize: "18px" }} /> */}
+              <FontAwesomeIcon icon={faPlay} size={"lg"} />
             </a>
           </Tooltip>
           <Tooltip placement="top" title={"Add track to queue"}>
             <a onClick={() => addToQueue(record.uri)}>
-              <MenuUnfoldOutlined style={{ fontSize: "18px" }} />
+              {/* <MenuUnfoldOutlined style={{ fontSize: "18px" }} /> */}
+              <FontAwesomeIcon icon={faBarsStaggered} size={"lg"} />
             </a>
           </Tooltip>
+
           <Tooltip placement="top" title={"Add track to seed search"}>
-            <a onClick={() => addTrackToSeeds(record)}>
-              <PlusCircleOutlined style={{ fontSize: "18px" }} />
+            <a onClick={() => addTrackToSeeds(record)} >
+              {/* <PlusCircleOutlined style={{ fontSize: "18px" }} /> */}
+
+              <FontAwesomeIcon icon={faPlusCircle} size={"lg"} />
             </a>
           </Tooltip>
           <Tooltip placement="top" title={"Open in Spotify"}>
-            <a href={record.url} target="_blank" rel="noreferrer">
-              <EyeOutlined style={{ fontSize: "18px" }} />
+            <a href={record.url} target="_blank" rel="noreferrer" style={{ color: "#1DB954" }}>
+              <FontAwesomeIcon icon={faSpotify} size={"lg"} />
             </a>
           </Tooltip>
+
         </Space>
       ),
     },

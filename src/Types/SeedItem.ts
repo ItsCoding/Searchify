@@ -12,6 +12,7 @@ type SeedItem = {
     value: string,
     sthumb: string,
     label: string | JSX.Element,
+    uri?: string,
 }
 
 export {

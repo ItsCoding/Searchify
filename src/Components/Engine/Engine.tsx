@@ -15,6 +15,8 @@ import {RecommendationOptions} from "../../Types/RecommendationOptions";
 import SpotifyArtist from "../../Types/SpotifyArtist";
 import SpotifyTrack from "../../Types/SpotifyTrack";
 import SeedDetailItem from "../../Types/SeedDetailItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 const { Panel } = Collapse;
 
@@ -232,7 +234,7 @@ const Engine = ({ token }: EngineProps) => {
             <div style={{ height: "100vh" }}>
               <div style={{ position: "fixed", top: "16vh", width: "33%" }}>
                 <div style={{ marginLeft: 15, marginRight: 15, marginTop: 45 }}>
-                  <h3>Audio Features</h3>
+                  <h3>Audio Features  <small style={{color: "#545454"}}>provided by <FontAwesomeIcon icon={faSpotify} size={"sm"}></FontAwesomeIcon></small></h3>
                   <hr />
                 </div>
                 <SeedRadar selected={tableDetail} data={seedDetails} />
