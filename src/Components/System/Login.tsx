@@ -2,6 +2,7 @@ import React from "react";
 import { Result, Button } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import Footer from "./Footer";
 
 type LoginProps = {
   fqdn: string,
@@ -75,6 +76,7 @@ const Login: React.FunctionComponent<LoginProps> = ({ fqdn, stateKey }) => {
             </Button>
           }
         />
+        <Footer />
       </div>
     </div>
   );

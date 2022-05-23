@@ -6,6 +6,7 @@ import "./App.css";
 import "antd/dist/antd.dark.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import Footer from "./Components/System/Footer";
 
 const stateKey = "spotify_auth_state-x43kdwe3ay";
 
@@ -54,6 +55,8 @@ function App() {
     }
   }, []);
 
+
+
   return (
     <>
       {token === "" ? (
@@ -65,20 +68,10 @@ function App() {
         <>
           <Header />
           <Engine token={token} />
-
+          <Footer />
         </>
       )}
-      <div
-        style={{
-          textAlign: "center",
-          paddingTop: 15,
-        }}
-      >
-        <p>Coded with ❤ | See on <a href="https://github.com/ItsCoding/Searchify" rel="noreferrer" target="_blank" >Github</a></p> <small style={{ color: "#545454" }}>
-          metadata provided by <FontAwesomeIcon icon={faSpotify} size={"lg"} />
-          {/* <img style={{ height: 15, marginLeft: 5 }} src="Spotify_Logo_CMYK_White.png"></img> */}
-        </small>
-      </div>
+
     </>
   );
 }
