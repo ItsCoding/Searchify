@@ -99,11 +99,17 @@ const ResultTable = ({
         <Progress
           strokeColor={{
             from: '#108ee9',
-            to: '#87d068',
+            to: '#52c41a',
           }}
+          // steps={50}
+          size="small"
+          // strokeColor="#52c41a"
           percent={percent}
           status="active"
           showInfo={false}
+          style={{
+            minWidth: 50
+          }}
         />
       </Tooltip>
 

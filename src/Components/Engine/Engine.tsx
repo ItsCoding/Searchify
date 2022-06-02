@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import RecomendationOptions from "./RecommendationOptions";
-import { Collapse, Button, message, Form, Row, Col } from "antd";
+import { Collapse, Button, message, Form, Row, Col, Dropdown, Menu, Input, Slider } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import SeedSearch from "./SeedSearch";
 import axios from "axios";
@@ -17,7 +17,7 @@ import SpotifyTrack from "../../Types/SpotifyTrack";
 import SeedDetailItem from "../../Types/SeedDetailItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { faClover } from "@fortawesome/free-solid-svg-icons";
+import { faClover, faMapPin } from "@fortawesome/free-solid-svg-icons";
 
 const { Panel } = Collapse;
 
@@ -42,6 +42,7 @@ const Engine = ({ token }: EngineProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [addAllLoading, setAddAllLoading] = useState<boolean>(false);
   const [addAllCount, setAddAllCount] = useState<AllCount>({ max: 0, count: 0 });
+  const [matchRange , setMatchRange] = useState<number>(0);
   /**
    * It takes the seed array and converts it into a query string that can be used to make a request to
    * the Spotify API
@@ -74,15 +75,62 @@ const Engine = ({ token }: EngineProps) => {
     return retQuery.replace("&", "?");
   };
 
+  const stayOne = (x: number, add: number) => {
+    let ret = x + add;
+    if (ret > 1) {
+      ret = 1;
+    } else if (ret < 0) {
+      ret = 0;
+    }
+    return ret;
+  }
+
+  const exactMatch = () => {
+
+    if (seed.length === 0) {
+      message.warn("You must have at least one seed item");
+      return;
+    }
+    if (seedDetails.length > 1 || seed[0]?.type !== "track") {
+      message.warn("You can only use exact match with one track seed item");
+      return;
+    } else {
+      console.log("Setting settings...");
+      let newOptions: RecommendationOptions = {};
+      [
+        "acousticness",
+        "danceability",
+        "energy",
+        "instrumentalness",
+        "liveness",
+        "speechiness",
+        "valence",
+      ].forEach(feature => {
+        let value = seedDetails[0][feature] ?? 0;
+        newOptions[feature] = {
+          enabled: true,
+          target: parseFloat(value.toString()),
+          range: [stayOne(parseFloat(value.toString() ?? "0"), -matchRange), stayOne(parseFloat(value?.toString() ?? "1"), matchRange)]
+        }
+      })
+      console.log("NEW SETTINGS ========>", newOptions);
+      setOptions(newOptions);
+      handleSearch(newOptions);
+    }
+  }
+
+
+
   /**
    * It takes the options object and returns a string that can be used as a query string for the API
    * @returns A string of the options that are enabled.
    */
-  const generateOptions = () => {
+  const generateOptions = (opts: RecommendationOptions) => {
     let retString = "";
-    Object.keys(options).forEach((key) => {
-      if (options[key].enabled) {
-        retString += `&max_${key}=${options[key].range[1]}&min_${key}=${options[key].range[0]}&target_${key}=${options[key].target}`;
+    console.log("SEARCHING WITH OPTIONS:", opts);
+    Object.keys(opts).forEach((key) => {
+      if (opts[key].enabled) {
+        retString += `&max_${key}=${opts[key].range[1]}&min_${key}=${opts[key].range[0]}&target_${key}=${opts[key].target}`;
       }
     });
     return retString;
@@ -142,7 +190,11 @@ const Engine = ({ token }: EngineProps) => {
    * It takes the user's input, sends it to the Spotify API, and then takes the response and sends it to
    * the Spotify Audio Features API to get more information about the tracks
    */
-  const handleSearch = () => {
+  const handleSearch = (opts: RecommendationOptions = options) => {
+    if (seed.length === 0) {
+      message.warn("You must have at least one seed item");
+      return;
+    }
     setSearching(true);
     console.log("Searching...");
     console.log("Searching for seeds: ", seed);
@@ -151,7 +203,7 @@ const Engine = ({ token }: EngineProps) => {
       .get(
         "https://api.spotify.com/v1/recommendations" +
         generateSeedQuery() +
-        generateOptions() +
+        generateOptions(opts) +
         "&limit=100",
         {
           headers: {
@@ -197,14 +249,14 @@ const Engine = ({ token }: EngineProps) => {
             sDetails.forEach((audioFeature) => {
               const track = mappedResult.find((t) => t.uri === audioFeature.uri);
               if (track) {
-                track.toneKey = audioFeature.key;
+                track.toneKey = parseInt(audioFeature.key.toString());
                 track.analysisData = audioFeature;
                 // delete audioFeature.key;
                 Object.keys(audioFeature).forEach((key) => {
                   if (key !== "key") track[key] = audioFeature[key];
                 });
                 track.overlapping = calculateOverlapping(track);
-                  i++;
+                i++;
                 // console.log(i, track.name, track.key, track.tempo, audioFeature);
               }
             });
@@ -260,22 +312,54 @@ const Engine = ({ token }: EngineProps) => {
               />
             </Panel>
           </Collapse>
-          <Button
-            style={{
-              marginBottom: 15,
-              marginRight: 15,
-            }}
-            loading={searching}
-            type="primary"
-            onClick={handleSearch}
-          >
-            <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
-          </Button>
-          <Button type="default"
-            loading={addAllLoading}
-            onClick={addAllToQueue}>
-            {addAllLoading ? `Adding ... ${addAllCount.count}/${addAllCount.max}` : "Add all to queue"}
-          </Button>
+          <Row style={{
+            marginBottom: 15,
+          }}>
+            <Col span={12}>
+              <Form layout="inline" >
+                <Form.Item>
+                  <Button
+                    style={{
+                      backgroundColor: "#2e7d32",
+                      borderColor: "#2e7d32",
+                    }}
+                    loading={searching}
+                    type="primary"
+                    onClick={() => handleSearch ()}
+                  >
+                    <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
+                  </Button>
+                </Form.Item>
+                <Form.Item>
+                  <Button
+
+                    loading={searching}
+                    type="primary"
+                    onClick={exactMatch}
+                  >
+                    <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
+                  </Button>
+                </Form.Item>
+                <Form.Item style={{ minWidth: 150 }} label={"Range"}>
+                  <Slider min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)}/>
+                </Form.Item>
+              </Form>
+            </Col>
+            <Col offset={10} span={2}>
+
+              <Button type="default"
+                loading={addAllLoading}
+                onClick={addAllToQueue}
+                style={{ float: "right" }}>
+                {addAllLoading ? `Adding ... ${addAllCount.count}/${addAllCount.max}` : "Add all to Queue"}
+              </Button>
+
+            </Col>
+          </Row>
+
+
+
+
 
           <ResultTable
             // tableDetail={tableDetail}
@@ -339,7 +423,7 @@ const Engine = ({ token }: EngineProps) => {
           ""
         )}
       </Row>
-    </div>
+    </div >
   );
 };
 

@@ -35,8 +35,8 @@ const SeedRadar = ({ data, selected = [] }) => {
     theme: {
       theme: "dark",
       colors10: [
-        "#6ab04c",
-        "#eb4d4b",
+        "#2e7d32", 
+        "#c62828",
         "#4834d4",
         "#be2edd",
         "#f0932b",

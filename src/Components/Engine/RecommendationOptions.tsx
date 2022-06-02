@@ -69,7 +69,7 @@ const recomendationOptionsSpecials: recommendationSpecials = {
 
 type RecomendationOptionProps = {
   option: string,
-  // optionDict: RecommendationOptions, 
+  optionDict: RecommendationOptions,
   changeOption: (option: string, value: RecommendationOption) => void,
 }
 
@@ -80,10 +80,17 @@ type RecomendationOptionsProps = {
 }
 
 
-const RecomendationOption = ({ option, changeOption }: RecomendationOptionProps) => {
+const RecomendationOption = ({ option, changeOption, optionDict }: RecomendationOptionProps) => {
   const [target, setTarget] = useState(0);
   const [range, setRange] = useState([0, 0]);
   const [enabled, setEnabled] = useState(false);
+
+  React.useEffect(() => {
+    if (enabled != optionDict[option]?.enabled) {
+      setEnabled(optionDict[option]?.enabled);
+    }
+  }, [optionDict])
+
 
   const onCheckChange = (e: CheckboxChangeEvent) => {
     setEnabled(e.target?.checked);
@@ -138,6 +145,7 @@ const RecomendationOption = ({ option, changeOption }: RecomendationOptionProps)
             <Form.Item label="Target">
               <Slider
                 onChange={onTargetChange}
+                value={optionDict[option]?.target}
                 tipFormatter={
                   recomendationOptionsSpecials[option]?.tooltip
                 }
@@ -165,6 +173,7 @@ const RecomendationOption = ({ option, changeOption }: RecomendationOptionProps)
                 }
                 onChange={onRangeChange}
                 range={{ draggableTrack: true }}
+                value={[optionDict[option]?.range[0], optionDict[option]?.range[1]]}
                 max={
                   recomendationOptionsSpecials[option]
                     ? recomendationOptionsSpecials[option].to
@@ -225,7 +234,7 @@ const RecomendationOptions = ({ setOptions, expanded, options }: RecomendationOp
           return (
             <Col className="gutter-row" span={!expanded ? 4 : 6} key={option + "-col"}>
               <RecomendationOption
-                // optionDict={options}
+                optionDict={options}
                 changeOption={changeOption}
                 option={option}
               />

@@ -354,7 +354,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
       <Input
         onChange={(e) => debouncedChangeHandler(encodeURIComponent(e.target.value))}
         placeholder="Track,Gerne,Artist..."
-        style={{ width: 330, zIndex: 100 }}
+        style={{ width: 700, zIndex: 100 }}
       />
     </AutoComplete>
   );

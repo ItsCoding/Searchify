@@ -13,7 +13,7 @@ import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 
-const seedColors = ["#6ab04c", "#eb4d4b", "#4834d4", "#be2edd", "#f0932b"];
+const seedColors = ["#2e7d32", "#c62828", "#4834d4", "#be2edd", "#f0932b"];
 
 type SeedTableProps = {
   seeds: SeedItem[],
@@ -85,6 +85,19 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
       });
   }, [seeds]);
 
+  const keyify = (items: SeedDetailItem[]) => {
+    let keyifyed: SeedDetailItem[] = [];
+    items.forEach((item) => {
+      keyifyed.push({
+        ...item,
+        toneKey: parseInt(item.key?.toString() ?? "0"),
+        key: item.uri,
+      });
+    });
+    return keyifyed;
+  }
+
+
   /* Defining the columns of the table. */
   const columns = [
     {
@@ -108,8 +121,8 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
     },
     {
       title: mapTitleToHelp("Key"),
-      dataIndex: "key",
-      key: "key",
+      dataIndex: "toneKey",
+      key: "toneKey",
       render: (s: number) => (s ? PitchClass.keyToPitchClass(s) : "-"),
     },
     {
@@ -153,7 +166,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
   ];
   return (
     <>
-      <Table dataSource={seedDetails} columns={columns} pagination={false} />
+      <Table dataSource={keyify(seedDetails)} columns={columns} pagination={false} />
     </>
   );
 };
