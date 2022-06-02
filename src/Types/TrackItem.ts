@@ -15,6 +15,7 @@ type TrackItem = {
     tempo?: number,
     time_signature?: number,
     fromHover?: boolean,
+    overlapping?: number,
     [key: string]: string | number | boolean | undefined;
 }
 

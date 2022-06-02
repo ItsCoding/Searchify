@@ -1,5 +1,5 @@
 import React, { SetStateAction } from "react";
-import { Table, Space, message, Tooltip } from "antd";
+import { Table, Space, message, Tooltip, Progress } from "antd";
 import axios from "axios";
 // import TrackDetails from "./TrackDetails";
 import {
@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { brands } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { faPlusCircle, faPlay, faBarsStaggered } from "@fortawesome/free-solid-svg-icons";
+import SeedDetailItem from "../../Types/SeedDetailItem";
 
 
 /**
@@ -38,6 +39,7 @@ type ResultTableProps = {
   setTableDetail: Dispatch<SetStateAction<TrackItem[]>>,
   seeds: Array<SeedItem>,
   setSeed: Dispatch<SetStateAction<SeedItem[]>>,
+  seedDetails: Array<SeedDetailItem>,
   // setPlaySong: Dispatch<any>
 }
 
@@ -48,6 +50,7 @@ const ResultTable = ({
   setTableDetail,
   seeds,
   setSeed,
+  seedDetails
   // setPlaySong
 }: ResultTableProps) => {
   /**
@@ -89,14 +92,35 @@ const ResultTable = ({
     });
   };
 
+
+  const SimilarProgress = ({ percent }: { percent: number }) => {
+    return (
+      <Tooltip title={`${percent}%`}>
+        <Progress
+          strokeColor={{
+            from: '#108ee9',
+            to: '#87d068',
+          }}
+          percent={percent}
+          status="active"
+          showInfo={false}
+        />
+      </Tooltip>
+
+    )
+  }
+
+
   /* Defining the columns of the table. */
   const columns = [
+
     {
       title: "#",
       dataIndex: "cover",
       key: "cover",
       render: (s: string) => <img src={s} alt="" style={{ height: 32, width: 32 }} />,
     },
+
     {
       title: "Title",
       dataIndex: "title",
@@ -167,6 +191,18 @@ const ResultTable = ({
       key: "mode",
       render: (s: number) => (s === 1 ? "Major" : "Minor"),
       sorter: (a: TrackItem, b: TrackItem) => (a.mode ?? 0) - (b.mode ?? 0),
+    },
+    {
+      title: mapTitleToHelp("Similarity"),
+      dataIndex: "overlapping",
+      key: "overlapping",
+      render: (s: number, r: TrackItem) => <SimilarProgress percent={parseFloat(s.toFixed(2))} />,
+      // defaultSortOrder: "descend",
+      sorter: {
+        defaultSortOrder: "descend",
+        compare: (a: TrackItem, b: TrackItem) => (a.overlapping ?? 0) > (b.overlapping ?? 0) ? -1 : 1,
+        // multiple: 5,
+      },
     },
     {
       title: "Action",

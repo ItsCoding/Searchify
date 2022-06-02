@@ -8,20 +8,26 @@ import ResultTable from "./ResultTable";
 import SeedTable from "./SeedTable";
 import SeedRadar from "./SeedRadar.jsx";
 import SpotifyPlayer from "react-spotify-web-playback";
-import {SeedItem} from "../../Types/SeedItem";
+import { SeedItem } from "../../Types/SeedItem";
 import TrackItem from "../../Types/TrackItem";
 import SpotifyAudioAnalysis from "../../Types/SpotifyAudioAnalysis";
-import {RecommendationOptions} from "../../Types/RecommendationOptions";
+import { RecommendationOptions } from "../../Types/RecommendationOptions";
 import SpotifyArtist from "../../Types/SpotifyArtist";
 import SpotifyTrack from "../../Types/SpotifyTrack";
 import SeedDetailItem from "../../Types/SeedDetailItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
+import { faClover } from "@fortawesome/free-solid-svg-icons";
 
 const { Panel } = Collapse;
 
 type EngineProps = {
   token: string
+}
+
+type AllCount = {
+  max: number,
+  count: number
 }
 
 const Engine = ({ token }: EngineProps) => {
@@ -34,6 +40,8 @@ const Engine = ({ token }: EngineProps) => {
   const [tableDetail, setTableDetail] = useState<Array<TrackItem>>([]);
   // const [clickedTableDetail, setClickedTableDetail] = useState([]);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [addAllLoading, setAddAllLoading] = useState<boolean>(false);
+  const [addAllCount, setAddAllCount] = useState<AllCount>({ max: 0, count: 0 });
   /**
    * It takes the seed array and converts it into a query string that can be used to make a request to
    * the Spotify API
@@ -80,6 +88,56 @@ const Engine = ({ token }: EngineProps) => {
     return retString;
   };
 
+
+  const addAllToQueue = async () => {
+    setAddAllCount({ max: searchResults.length, count: 0 });
+    setAddAllLoading(true);
+
+    try {
+      for (let i in searchResults) {
+        setAddAllCount({ max: searchResults.length, count: parseInt(i) + 1 });
+        let item: TrackItem = searchResults[i];
+        await axios({
+          url: `https://api.spotify.com/v1/me/player/queue?uri=${item.uri}`,
+          method: "post",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      }
+      message.success("Added all songs to queue");
+    } catch (error) {
+      message.error("Failed to add songs to queue");
+    }
+    setAddAllLoading(false);
+  }
+
+
+
+  const calculateSeedAVG = (key: string) => {
+    let sum = 0;
+    seedDetails.forEach(seed => {
+      sum += parseFloat(seed[key]?.toString() ?? "0");
+    })
+    return (sum / seedDetails.length);
+  }
+
+  const calculateOverlapping = (track: TrackItem) => {
+    let diffSum = 0;
+    [
+      "acousticness",
+      "danceability",
+      "energy",
+      "instrumentalness",
+      "liveness",
+      "speechiness",
+      "valence",
+    ].forEach(key => {
+      diffSum += Math.abs(parseFloat(track[key]?.toString() ?? "0") - calculateSeedAVG(key));
+    })
+    return ((1 - (diffSum / 7)) * 100);
+  }
+
   /**
    * It takes the user's input, sends it to the Spotify API, and then takes the response and sends it to
    * the Spotify Audio Features API to get more information about the tracks
@@ -87,6 +145,7 @@ const Engine = ({ token }: EngineProps) => {
   const handleSearch = () => {
     setSearching(true);
     console.log("Searching...");
+    console.log("Searching for seeds: ", seed);
     // console.log(generateSeedQuery(), generateOptions());
     axios
       .get(
@@ -144,7 +203,8 @@ const Engine = ({ token }: EngineProps) => {
                 Object.keys(audioFeature).forEach((key) => {
                   if (key !== "key") track[key] = audioFeature[key];
                 });
-                i++;
+                track.overlapping = calculateOverlapping(track);
+                  i++;
                 // console.log(i, track.name, track.key, track.tempo, audioFeature);
               }
             });
@@ -173,15 +233,9 @@ const Engine = ({ token }: EngineProps) => {
                   selectedSeeds={seed}
                 />
               </Form.Item>
-              <Form.Item>
-                <Button
-                  loading={searching}
-                  type="primary"
-                  onClick={handleSearch}
-                >
-                  Wish me luck!
-                </Button>
-              </Form.Item>
+              {/* <Form.Item>
+               
+              </Form.Item> */}
             </Form>
           </div>
           <div style={{ paddingBottom: 15 }}>
@@ -206,6 +260,22 @@ const Engine = ({ token }: EngineProps) => {
               />
             </Panel>
           </Collapse>
+          <Button
+            style={{
+              marginBottom: 15,
+              marginRight: 15,
+            }}
+            loading={searching}
+            type="primary"
+            onClick={handleSearch}
+          >
+            <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
+          </Button>
+          <Button type="default"
+            loading={addAllLoading}
+            onClick={addAllToQueue}>
+            {addAllLoading ? `Adding ... ${addAllCount.count}/${addAllCount.max}` : "Add all to queue"}
+          </Button>
 
           <ResultTable
             // tableDetail={tableDetail}
@@ -214,7 +284,8 @@ const Engine = ({ token }: EngineProps) => {
             seeds={seed}
             setSeed={setSeed}
             token={token}
-            // setPlaySong={setPlaySong}
+            seedDetails={seedDetails}
+          // setPlaySong={setPlaySong}
           />
         </Col>
         <Button
@@ -234,7 +305,7 @@ const Engine = ({ token }: EngineProps) => {
             <div style={{ height: "100vh" }}>
               <div style={{ position: "fixed", top: "16vh", width: "33%" }}>
                 <div style={{ marginLeft: 15, marginRight: 15, marginTop: 45 }}>
-                  <h3>Audio Features  <small style={{color: "#545454"}}>provided by <FontAwesomeIcon icon={faSpotify} size={"sm"}></FontAwesomeIcon></small></h3>
+                  <h3>Audio Features  <small style={{ color: "#545454" }}>provided by <FontAwesomeIcon icon={faSpotify} size={"sm"}></FontAwesomeIcon></small></h3>
                   <hr />
                 </div>
                 <SeedRadar selected={tableDetail} data={seedDetails} />
