@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import RecomendationOptions from "./RecommendationOptions";
-import { Collapse, Button, message, Form, Row, Col, Dropdown, Menu, Input, Slider } from "antd";
+import { Collapse, Button, message, Form, Row, Col, Tooltip, Slider } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import SeedSearch from "./SeedSearch";
 import axios from "axios";
@@ -42,7 +42,8 @@ const Engine = ({ token }: EngineProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [addAllLoading, setAddAllLoading] = useState<boolean>(false);
   const [addAllCount, setAddAllCount] = useState<AllCount>({ max: 0, count: 0 });
-  const [matchRange , setMatchRange] = useState<number>(0);
+  const [matchRange, setMatchRange] = useState<number>(0);
+  const [firstOpenMenu, setFirstOpenMenu] = useState<boolean>(true);
   /**
    * It takes the seed array and converts it into a query string that can be used to make a request to
    * the Spotify API
@@ -325,7 +326,7 @@ const Engine = ({ token }: EngineProps) => {
                     }}
                     loading={searching}
                     type="primary"
-                    onClick={() => handleSearch ()}
+                    onClick={() => handleSearch()}
                   >
                     <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
                   </Button>
@@ -341,7 +342,7 @@ const Engine = ({ token }: EngineProps) => {
                   </Button>
                 </Form.Item>
                 <Form.Item style={{ minWidth: 150 }} label={"Range"}>
-                  <Slider min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)}/>
+                  <Slider min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
                 </Form.Item>
               </Form>
             </Col>
@@ -372,18 +373,23 @@ const Engine = ({ token }: EngineProps) => {
           // setPlaySong={setPlaySong}
           />
         </Col>
-        <Button
-          style={{
-            position: "fixed",
-            top: "45vh",
-            right: expanded ? "" : "25px",
-            left: expanded ? "67%" : "",
-            zIndex: 100,
-          }}
-          onClick={() => setExpanded((prev) => !prev)}
-        >
-          {!expanded ? <LeftOutlined /> : <RightOutlined />}
-        </Button>
+        <Tooltip placement="topRight" title={"Open Me :)"} visible={firstOpenMenu} trigger={"contextMenu"}>
+          <Button
+            style={{
+              position: "fixed",
+              top: "45vh",
+              right: expanded ? "" : "25px",
+              left: expanded ? "67%" : "",
+              zIndex: 100,
+              width: "40px"
+            }}
+            onClick={() => {
+              setFirstOpenMenu(false)
+              setExpanded((prev) => !prev)
+            }}>{!expanded ? <LeftOutlined /> : <RightOutlined />}</Button>
+        </Tooltip>
+
+
         {expanded ? (
           <Col span={8}>
             <div style={{ height: "100vh" }}>
