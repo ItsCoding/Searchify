@@ -109,8 +109,8 @@ const Engine = ({ token }: EngineProps) => {
         let value = seedDetails[0][feature] ?? 0;
         newOptions[feature] = {
           enabled: true,
-          target: parseFloat(value.toString()),
-          range: [stayOne(parseFloat(value.toString() ?? "0"), -matchRange), stayOne(parseFloat(value?.toString() ?? "1"), matchRange)]
+          target: parseFloat(parseFloat(value.toString()).toFixed(2)),
+          range: [parseFloat(stayOne(parseFloat(value.toString() ?? "0"), -matchRange).toFixed(2)), parseFloat(stayOne(parseFloat(value?.toString() ?? "1"), matchRange).toFixed(2))]
         }
       })
       console.log("NEW SETTINGS ========>", newOptions);

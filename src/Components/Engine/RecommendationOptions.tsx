@@ -1,9 +1,10 @@
 import React, { useState, Dispatch, ReactNode } from "react";
-import { Row, Form, Col, Card, Checkbox, Slider, Tooltip } from "antd";
+import { Row, Form, Col, Card, Checkbox, Tooltip } from "antd";
 import PitchClass from "../../System/PitchClass";
 import { recomendationHelps } from "../../System/Help";
 import { RecommendationOption, RecommendationOptions } from "../../Types/RecommendationOptions";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import Slider from "@mui/material/Slider";
 // const recomendationHelps = Help.recomendationHelps;
 
 /* A list of all the options that can be used to filter the recomendations. */
@@ -22,6 +23,7 @@ const recomendationOptions = [
   "valence",
 ];
 
+
 /* A dictionary that contains the min, max, and step values for the sliders. */
 
 type recommendationSpecials = {
@@ -29,15 +31,15 @@ type recommendationSpecials = {
     from: number;
     to: number;
     step: number;
-    tooltip: (value: number | undefined) => ReactNode;
+    tooltip: (value: number | undefined,index: number) => string;
   }
 }
 
-const defaultFormatter = (s: number | undefined) => {
+const defaultFormatter = (s: number | undefined): string => {
   if (s === undefined) {
     return "undefined"
   }
-  return s;
+  return s.toFixed(2);
 };
 
 const recomendationOptionsSpecials: recommendationSpecials = {
@@ -45,25 +47,25 @@ const recomendationOptionsSpecials: recommendationSpecials = {
     from: 0,
     to: 11,
     step: 1,
-    tooltip: (value) => PitchClass.keyToPitchClass(value),
+    tooltip: (value,index) => PitchClass.keyToPitchClass(value),
   },
   popularity: {
     from: 0,
     to: 100,
     step: 1,
-    tooltip: (value) => defaultFormatter(value)
+    tooltip: (value,index) => defaultFormatter(value)
   },
   tempo: {
     from: 0,
     to: 200,
     step: 1,
-    tooltip: (value) => defaultFormatter(value)
+    tooltip: (value,index) => defaultFormatter(value)
   },
   time_signature: {
     from: 3,
     to: 7,
     step: 1,
-    tooltip: (value) => defaultFormatter(value)
+    tooltip: (value,index) => defaultFormatter(value)
   },
 };
 
@@ -94,30 +96,47 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
 
   const onCheckChange = (e: CheckboxChangeEvent) => {
     setEnabled(e.target?.checked);
-    changeOption(option, {
-      enabled: e.target.checked,
-      target: target,
-      range: range,
-    });
+    //check if the option is in the dictionary
+    if (optionDict[option]) {
+      changeOption(option, {
+        enabled: e.target.checked,
+        target: target,
+        range: range,
+      });
+    }else{
+      changeOption(option, {
+        enabled: e.target.checked,
+        target: 0.5,
+        range: [0,1],
+      });
+    }
+    
   };
 
-  const onTargetChange = (value: number) => {
-    setTarget(value);
-    changeOption(option, {
-      enabled: enabled,
-      target: value,
-      range: range,
-    });
+  // const onTargetChange = (value: number) => {
+  //   setTarget(value);
+  //   changeOption(option, {
+  //     enabled: enabled,
+  //     target: value,
+  //     range: range,
+  //   });
+  // };
+
+  const onRangeChange = (value: number[]) => {
+    if (Array.isArray(value)) {
+      setRange(value);
+      changeOption(option, {
+        enabled: enabled,
+        target: value[1],
+        range: [value[0], value[2]],
+      });
+    }
+
   };
 
-  const onRangeChange = (value: Array<number>) => {
-    setRange(value);
-    changeOption(option, {
-      enabled: enabled,
-      target: target,
-      range: value,
-    });
-  };
+  const valuetext = (value: number) => {
+    return `${value}`;
+  }
 
 
   return (
@@ -133,6 +152,10 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
           </>
         }
         style={{ marginBottom: 15 }}
+        bodyStyle={{
+          paddingLeft: 20,
+          paddingRight: 20
+        }}
         key={option + "-card"}
         extra={
           <Checkbox checked={enabled} onChange={onCheckChange}>
@@ -142,13 +165,19 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
       >
         {enabled ? (
           <>
-            <Form.Item label="Target">
               <Slider
-                onChange={onTargetChange}
-                value={optionDict[option]?.target}
-                tipFormatter={
-                  recomendationOptionsSpecials[option]?.tooltip
-                }
+                
+                // defaultValue={[0,0.5,1]}
+                valueLabelDisplay="auto"
+                getAriaValueText={recomendationOptionsSpecials[option]?.tooltip}
+                onChange={(event, value) => {
+                  if (Array.isArray(value)) {
+                    onRangeChange(value)
+                    // console.log(value)
+                  }
+                }}
+                value={[optionDict[option]?.range[0], optionDict[option]?.target, optionDict[option]?.range[1]]}
+              
                 max={
                   recomendationOptionsSpecials[option]
                     ? recomendationOptionsSpecials[option].to
@@ -165,8 +194,7 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
                     : 0.01
                 }
               />
-            </Form.Item>
-            <Form.Item label="Min/Max">
+            {/* <Form.Item label="Min/Max">
               <Slider
                 tipFormatter={
                   recomendationOptionsSpecials[option]?.tooltip
@@ -190,7 +218,7 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
                     : 0.01
                 }
               />
-            </Form.Item>
+            </Form.Item> */}
           </>
         ) : null}
       </Card>
