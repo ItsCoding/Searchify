@@ -1,7 +1,9 @@
 # Searchify
 
 Spotify has an very powerfull recommendation API. The bummer is, you bascily have no access to all the nice features trough the Spotify client itself. Here comes Searchify. An simple UI made to help you, find the music you wanna listen to. Try it out [here](https://itscoding.github.io/Searchify/ "here")!
-If you wanna read more about the API im using go [here](https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations "here").
+If you wanna read more about the API im using go here: 
+
+## [Try it out!](https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations "here")
 
 Special Thanks to the following Libarys/Companys:
 - [Spotify Developer](https://developer.spotify.com "Spotify Developer") - Providing all the Data
@@ -11,6 +13,8 @@ Special Thanks to the following Libarys/Companys:
 - [Axios](https://axios-http.com "Axios") - Making HTTP(s) request a lot easier
 - [Lodash](https://lodash.com "Lodash") - Debouncing search input
 - [Fontawsome](https://fontawesome.com "Fontawsome") - Icon libary
+- [MUI](https://mui.com "MUI") - The only ones with a multi dot slider 
+- [Intro.JS/Intro.JS-React](https://github.com/HiDeoo/intro.js-react "Intro.JS-React") - Intro guide and react wrapper
 
 ## Building yourself
 
