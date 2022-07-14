@@ -166,7 +166,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
   ];
   return (
     <>
-      <Table dataSource={keyify(seedDetails)} columns={columns} pagination={false} />
+      <Table id="seed_table" dataSource={keyify(seedDetails)} columns={columns} pagination={false} />
     </>
   );
 };

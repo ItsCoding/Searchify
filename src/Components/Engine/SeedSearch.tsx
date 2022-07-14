@@ -350,8 +350,14 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
       dropdownMatchSelectWidth={700}
       options={options}
       onSelect={onSelect}
+      className="seed_search"
+      style={{
+        zIndex: "110"
+      }}
     >
       <Input
+        className="seed_search"
+        data-intro='Hello step one!'
         onChange={(e) => debouncedChangeHandler(encodeURIComponent(e.target.value))}
         placeholder="Track,Gerne,Artist..."
         style={{ width: 700, zIndex: 100 }}

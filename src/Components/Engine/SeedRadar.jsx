@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 // import ReactDOM from "react-dom";
 import { Result } from "antd";
 import { Radar } from "@ant-design/plots";
@@ -35,7 +35,7 @@ const SeedRadar = ({ data, selected = [] }) => {
     theme: {
       theme: "dark",
       colors10: [
-        "#2e7d32", 
+        "#2e7d32",
         "#c62828",
         "#4834d4",
         "#be2edd",
@@ -77,9 +77,9 @@ const SeedRadar = ({ data, selected = [] }) => {
     },
     domStyles: {
       "g2-tooltip": {
-        zIndex : 1000
-      }
-    }
+        zIndex: 1000,
+      },
+    },
   };
 
   /**
@@ -111,7 +111,7 @@ const SeedRadar = ({ data, selected = [] }) => {
   };
 
   return (
-    <div>
+    <div id="seed_radar">
       {data.length < 1 ? (
         <div className="center-content">
           <Result title="Select a trackseed to see the audio features" />

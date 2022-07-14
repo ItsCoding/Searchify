@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RecomendationOptions from "./RecommendationOptions";
 import { Collapse, Button, message, Form, Row, Col, Tooltip, Slider } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
@@ -18,8 +18,28 @@ import SeedDetailItem from "../../Types/SeedDetailItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { faClover, faMapPin } from "@fortawesome/free-solid-svg-icons";
-
+import { Steps, Hints } from 'intro.js-react';
+import { steps } from "../System/steps"
+import Footer from "../System/Footer"
 const { Panel } = Collapse;
+
+// const steps = [
+//   {
+//     element: '.selector1',
+//     intro: 'test 1',
+//     position: 'right',
+//     tooltipClass: 'myTooltipClass',
+//     highlightClass: 'myHighlightClass',
+//   },
+//   {
+//     element: '.selector2',
+//     intro: 'test 2',
+//   },
+//   {
+//     element: '.selector3',
+//     intro: 'test 3',
+//   },
+// ];
 
 type EngineProps = {
   token: string
@@ -44,6 +64,42 @@ const Engine = ({ token }: EngineProps) => {
   const [addAllCount, setAddAllCount] = useState<AllCount>({ max: 0, count: 0 });
   const [matchRange, setMatchRange] = useState<number>(0);
   const [firstOpenMenu, setFirstOpenMenu] = useState<boolean>(true);
+  const [showGuide, setShowGuide] = useState<boolean>(false);
+  const [collapseActiveKey, setCollapseActiveKey] = useState<string | string[]>(["0"]);
+
+  useEffect(() => {
+    if (window.localStorage.getItem("tutorial_done") !== "true") {
+      startGuide();
+      window.localStorage.setItem("tutorial_done", "true")
+    }
+
+  }, [])
+
+
+
+  const startGuide = () => {
+    console.log("Guide started")
+    setExpanded(true);
+    setCollapseActiveKey("2")
+    setTimeout(() => {
+      setShowGuide(true)
+    }, 500);
+
+  }
+
+
+  const stepHandler = (nextStep: number) => {
+    console.log(nextStep, "STEP")
+    // switch (nextStep) {
+    //   case 3:
+    //     console.log("Step 3 special")
+
+    //     break;
+    // }
+  }
+
+
+
   /**
    * It takes the seed array and converts it into a query string that can be used to make a request to
    * the Spotify API
@@ -272,15 +328,23 @@ const Engine = ({ token }: EngineProps) => {
         setSearching(false);
       });
   };
-
   return (
     <div style={{ paddingLeft: 15, paddingRight: 15 }}>
+      <Steps
+        enabled={showGuide}
+        steps={steps}
+        initialStep={0}
+        onExit={() => { setShowGuide(false) }}
+        onBeforeChange={stepHandler}
+
+      />
       <Row>
         <Col span={expanded ? 16 : 23}>
           <div style={{ paddingBottom: 15 }}>
             <Form layout="inline">
               <Form.Item>
                 <SeedSearch
+
                   token={token}
                   setSelectedSeeds={setSeed}
                   selectedSeeds={seed}
@@ -301,7 +365,7 @@ const Engine = ({ token }: EngineProps) => {
             />
           </div>
 
-          <Collapse style={{ marginBottom: 15 }} defaultActiveKey={[1]}>
+          <Collapse style={{ marginBottom: 15 }} activeKey={collapseActiveKey} onChange={(changeKey) => setCollapseActiveKey(changeKey)}>
             {/* <Panel header="Seed Details" key="1">
             
         </Panel> */}
@@ -320,6 +384,7 @@ const Engine = ({ token }: EngineProps) => {
               <Form layout="inline" >
                 <Form.Item>
                   <Button
+                    id="wish_me_luck"
                     style={{
                       backgroundColor: "#2e7d32",
                       borderColor: "#2e7d32",
@@ -331,19 +396,21 @@ const Engine = ({ token }: EngineProps) => {
                     <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
                   </Button>
                 </Form.Item>
-                <Form.Item>
-                  <Button
+                <div id="exact_match_tools">
+                  <Form.Item>
+                    <Button
+                      loading={searching}
+                      type="primary"
+                      onClick={exactMatch}
+                    >
+                      <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
+                    </Button>
+                  </Form.Item>
+                  <Form.Item style={{ minWidth: 150 }} label={"Range"}>
+                    <Slider min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
+                  </Form.Item>
+                </div>
 
-                    loading={searching}
-                    type="primary"
-                    onClick={exactMatch}
-                  >
-                    <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
-                  </Button>
-                </Form.Item>
-                <Form.Item style={{ minWidth: 150 }} label={"Range"}>
-                  <Slider min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
-                </Form.Item>
               </Form>
             </Col>
             <Col offset={10} span={2}>
@@ -373,21 +440,21 @@ const Engine = ({ token }: EngineProps) => {
           // setPlaySong={setPlaySong}
           />
         </Col>
-        <Tooltip placement="topRight" title={"Open Me :)"} visible={firstOpenMenu} trigger={"contextMenu"}>
-          <Button
-            style={{
-              position: "fixed",
-              top: "45vh",
-              right: expanded ? "" : "25px",
-              left: expanded ? "67%" : "",
-              zIndex: 100,
-              width: "40px"
-            }}
-            onClick={() => {
-              setFirstOpenMenu(false)
-              setExpanded((prev) => !prev)
-            }}>{!expanded ? <LeftOutlined /> : <RightOutlined />}</Button>
-        </Tooltip>
+        {/* <Tooltip placement="topRight" title={"Open Me :)"} visible={firstOpenMenu} trigger={"contextMenu"}> */}
+        <Button
+          style={{
+            position: "fixed",
+            top: "45vh",
+            right: expanded ? "" : "25px",
+            left: expanded ? "67%" : "",
+            zIndex: 100,
+            width: "40px"
+          }}
+          onClick={() => {
+            setFirstOpenMenu(false)
+            setExpanded((prev) => !prev)
+          }}>{!expanded ? <LeftOutlined /> : <RightOutlined />}</Button>
+        {/* </Tooltip> */}
 
 
         {expanded ? (
@@ -429,6 +496,7 @@ const Engine = ({ token }: EngineProps) => {
           ""
         )}
       </Row>
+      <Footer addition={<a onClick={() => startGuide()}>Tutorial</a>} />
     </div >
   );
 };

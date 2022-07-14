@@ -140,7 +140,7 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
 
 
   return (
-    <>
+    <div>
       <Card
         size="small"
         title={
@@ -222,7 +222,7 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
           </>
         ) : null}
       </Card>
-    </>
+    </div>
   );
 };
 
@@ -256,7 +256,7 @@ const RecomendationOptions = ({ setOptions, expanded, options }: RecomendationOp
   };
 
   return (
-    <>
+    <div  id="recommendation_options">
       <Row gutter={16}>
         {recomendationOptions.sort(sortOptions).map((option) => {
           return (
@@ -270,7 +270,7 @@ const RecomendationOptions = ({ setOptions, expanded, options }: RecomendationOp
           );
         })}
       </Row>
-    </>
+    </div>
   );
 };
 

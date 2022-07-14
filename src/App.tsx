@@ -3,6 +3,7 @@ import Login from "./Components/System/Login";
 import Engine from "./Components/Engine/Engine";
 import { PageHeader, message, notification } from "antd";
 import "./App.css";
+import './styles/introjs.min.css';
 import "antd/dist/antd.dark.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
@@ -68,7 +69,6 @@ function App() {
         <>
           <Header />
           <Engine token={token} />
-          <Footer />
         </>
       )}
 
