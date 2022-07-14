@@ -97,7 +97,7 @@ const Engine = ({ token }: EngineProps) => {
     //     break;
     // }
   }
-
+  // console.log(steps)
 
 
   /**
@@ -396,20 +396,21 @@ const Engine = ({ token }: EngineProps) => {
                     <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
                   </Button>
                 </Form.Item>
-                <div id="exact_match_tools">
-                  <Form.Item>
-                    <Button
-                      loading={searching}
-                      type="primary"
-                      onClick={exactMatch}
-                    >
-                      <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
-                    </Button>
-                  </Form.Item>
-                  <Form.Item style={{ minWidth: 150 }} label={"Range"}>
-                    <Slider min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
-                  </Form.Item>
-                </div>
+                {/* <div id="exact_match_tools"> */}
+                <Form.Item>
+                  <Button
+                    className="exact_match_tools"
+                    loading={searching}
+                    type="primary"
+                    onClick={exactMatch}
+                  >
+                    <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
+                  </Button>
+                </Form.Item>
+                <Form.Item style={{ minWidth: 150 }} label={"Range"}>
+                  <Slider className="exact_match_tools" min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
+                </Form.Item>
+                {/* </div> */}
 
               </Form>
             </Col>

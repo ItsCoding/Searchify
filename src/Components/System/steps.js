@@ -56,7 +56,9 @@ export const steps = [
     tooltipClass: "myTooltipClass",
     highlightClass: "myHighlightClass"
   }
-].map((item) => {
+].map((item,i,arr) => {
+    if(i === arr.length - 1)
+      return item
     return {
         exitOnOverlayClick: false,
         ...item
