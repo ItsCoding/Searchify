@@ -1,9 +1,10 @@
 # Searchify
 
-Spotify has an very powerfull recommendation API. The bummer is, you bascily have no access to all the nice features trough the Spotify client itself. Here comes Searchify. An simple UI made to help you, find the music you wanna listen to. Try it out [here](https://itscoding.github.io/Searchify/ "here")!
-If you wanna read more about the API im using go here: 
+Spotify has an very powerfull recommendation API. The bummer is, you bascily have no access to all the nice features trough the Spotify client itself. Here comes Searchify. An simple UI made to help you, find the music you wanna listen to. 
 
-## [Try it out!](https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations "here")
+## [Try it out ](https://itscoding.github.io/Searchify/ "here")
+
+If you wanna read more about the API im using go [here](https://developer.spotify.com/documentation/web-api/reference/#/operations/get-recommendations "here")
 
 Special Thanks to the following Libarys/Companys:
 - [Spotify Developer](https://developer.spotify.com "Spotify Developer") - Providing all the Data
