@@ -496,7 +496,7 @@ const Engine = ({ token }: EngineProps) => {
           ""
         )}
       </Row>
-      <Footer addition={<a onClick={() => startGuide()}>Tutorial</a>} />
+      <Footer addition={<> | <a onClick={() => startGuide()}>Tutorial</a></>} />
     </div >
   );
 };
