@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Login from "./Components/System/Login";
 import Engine from "./Components/Engine/Engine";
-import { PageHeader, message, notification } from "antd";
+import { PageHeader, message } from "antd";
 import "./App.css";
 import './styles/introjs.min.css';
 import "antd/dist/antd.dark.min.css";
@@ -44,10 +44,7 @@ function App() {
         setTimeout(() => {
           console.log("Key expired!")
           setToken("");
-          notification.warning({
-            message: "Please relog into Spotify!",
-            duration: 0
-          });
+          message.warn("Please relog into Spotify!");
         }, parseInt(urlParams.get("expires_in") ?? "0") * 1000);
         window.history.pushState("", "", fqdn);
       } else {
