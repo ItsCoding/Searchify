@@ -23,7 +23,7 @@ const recomendationOptions = [
   "valence",
 ];
 
-const sliderIndexes = ["Min","Target","Max"]
+const sliderIndexes = ["Min", "Target", "Max"]
 
 
 /* A dictionary that contains the min, max, and step values for the sliders. */
@@ -33,7 +33,7 @@ type recommendationSpecials = {
     from: number;
     to: number;
     step: number;
-    tooltip: (value: number | undefined,index: number) => string;
+    tooltip: (value: number | undefined, index: number) => string;
   }
 }
 
@@ -49,25 +49,33 @@ const recomendationOptionsSpecials: recommendationSpecials = {
     from: 0,
     to: 11,
     step: 1,
-    tooltip: (value,index) => sliderIndexes[index] + ": " + PitchClass.keyToPitchClass(value),
+    tooltip: (value, index) => {
+      return sliderIndexes[index] + ": " + PitchClass.keyToPitchClass(value)
+    },
   },
   popularity: {
     from: 0,
     to: 100,
     step: 1,
-    tooltip: (value,index) => defaultFormatter(value,index)
+    tooltip: (value, index) => {
+      return `${sliderIndexes[index]}: ${value?.toFixed(0)}`
+    }
   },
   tempo: {
     from: 0,
     to: 200,
     step: 1,
-    tooltip: (value,index) => defaultFormatter(value,index)
+    tooltip: (value, index) => {
+      return `${sliderIndexes[index]}: ${value} BPM`
+    }
   },
   time_signature: {
     from: 3,
     to: 7,
     step: 1,
-    tooltip: (value,index) => defaultFormatter(value,index)
+    tooltip: (value, index) => {
+      return `${sliderIndexes[index]}: ${value}/4`
+    }
   },
 };
 
@@ -105,14 +113,20 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
         target: target,
         range: range,
       });
-    }else{
+    } else {
+      let max = recomendationOptionsSpecials[option]?.to ?? 1;
+      let min = recomendationOptionsSpecials[option]?.from ?? 0;
+      let target = max * 0.5;
+      if (target > 1 && target % 1 !== 0) {
+        target = Math.round(target)
+      }
       changeOption(option, {
         enabled: e.target.checked,
-        target: 0.5,
-        range: [0,1],
+        target: target,
+        range: [min, max],
       });
     }
-    
+
   };
 
   // const onTargetChange = (value: number) => {
@@ -167,41 +181,41 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
       >
         {enabled ? (
           <>
-              <Slider
-                sx={{
-                  zIndex: "100",
-                  '& .MuiSlider-thumb': {
-                    width: '15px',
-                    height: '15px'
-                  }
-                }}
-                // defaultValue={[0,0.5,1]}
-                valueLabelDisplay="auto"
-                valueLabelFormat={recomendationOptionsSpecials[option]?.tooltip ?? defaultFormatter}
-                onChange={(event, value) => {
-                  if (Array.isArray(value)) {
-                    onRangeChange(value)
-                    // console.log(value)
-                  }
-                }}
-                value={[optionDict[option]?.range[0], optionDict[option]?.target, optionDict[option]?.range[1]]}
-              
-                max={
-                  recomendationOptionsSpecials[option]
-                    ? recomendationOptionsSpecials[option].to
-                    : 1
+            <Slider
+              sx={{
+                zIndex: "100",
+                '& .MuiSlider-thumb': {
+                  width: '15px',
+                  height: '15px'
                 }
-                min={
-                  recomendationOptionsSpecials[option]
-                    ? recomendationOptionsSpecials[option].from
-                    : 0
+              }}
+              // defaultValue={[0,0.5,1]}
+              valueLabelDisplay="auto"
+              valueLabelFormat={recomendationOptionsSpecials[option]?.tooltip ?? defaultFormatter}
+              onChange={(event, value) => {
+                if (Array.isArray(value)) {
+                  onRangeChange(value)
+                  // console.log(value)
                 }
-                step={
-                  recomendationOptionsSpecials[option]
-                    ? recomendationOptionsSpecials[option].step
-                    : 0.01
-                }
-              />
+              }}
+              value={[optionDict[option]?.range[0], optionDict[option]?.target, optionDict[option]?.range[1]]}
+
+              max={
+                recomendationOptionsSpecials[option]
+                  ? recomendationOptionsSpecials[option].to
+                  : 1
+              }
+              min={
+                recomendationOptionsSpecials[option]
+                  ? recomendationOptionsSpecials[option].from
+                  : 0
+              }
+              step={
+                recomendationOptionsSpecials[option]
+                  ? recomendationOptionsSpecials[option].step
+                  : 0.01
+              }
+            />
             {/* <Form.Item label="Min/Max">
               <Slider
                 tipFormatter={
@@ -264,7 +278,7 @@ const RecomendationOptions = ({ setOptions, expanded, options }: RecomendationOp
   };
 
   return (
-    <div  id="recommendation_options">
+    <div id="recommendation_options">
       <Row gutter={16}>
         {recomendationOptions.sort(sortOptions).map((option) => {
           return (
