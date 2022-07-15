@@ -16,7 +16,8 @@ type TrackItem = {
     time_signature?: number,
     fromHover?: boolean,
     overlapping?: number,
-    [key: string]: string | number | boolean | undefined;
+    artistIDs: string[]
+    [key: string]: string | number | boolean | undefined | string[];
 }
 
 export default TrackItem;

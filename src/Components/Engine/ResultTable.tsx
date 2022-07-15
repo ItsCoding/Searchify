@@ -257,7 +257,8 @@ const ResultTable = ({
       key: track.uri,
       type: SeedType.Track,
       sthumb: track.cover,
-      label: ""
+      label: "",
+      artistIDs: track.artistIDs
     };
     if (seeds.length < 5) {
       if (!seeds.find((seed) => seed.key === newSeed.key)) {

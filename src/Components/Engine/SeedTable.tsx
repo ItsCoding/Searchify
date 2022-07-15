@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { useEffect } from "react";
-import { Table, Badge, Space } from "antd";
+import { Table, Badge, Space, Popover, Button } from "antd";
 import axios from "axios";
 
 import PitchClass from "../../System/PitchClass";
@@ -10,7 +10,10 @@ import { SeedItem } from "../../Types/SeedItem";
 import SeedDetailItem from "../../Types/SeedDetailItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faInfo, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { GenreDict } from "../../Types/GenreInfo";
+import SpotifyArtist from "../../Types/SpotifyArtist";
+import GenrePopover from "./GenrePopover";
 
 
 const seedColors = ["#2e7d32", "#c62828", "#4834d4", "#be2edd", "#f0932b"];
@@ -25,6 +28,9 @@ type SeedTableProps = {
 
 
 const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedTableProps) => {
+
+  const [genreStorrage, setGenreStorrage] = useState<GenreDict>();
+
 
   /**
    * It removes the seed from the list of seeds
@@ -51,6 +57,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
           title: item.value,
           cover: item.sthumb,
           type: item.type,
+          artistIDs: item.artistIDs ?? []
         });
       });
       setSeedDetails(sDetails);
@@ -72,6 +79,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
           const se = seeds.find((s) => s.spotifyseed === it?.uri);
           it.title = se?.value ?? "";
           it.cover = se?.sthumb ?? "";
+          it.artistIDs = se?.artistIDs ?? []
         });
         nonTrackSeeds.forEach((item) => {
           sDetails.push({
@@ -79,6 +87,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
             title: item.value,
             cover: item.sthumb,
             type: item.type,
+            artistIDs: item.artistIDs ?? []
           });
         });
         setSeedDetails(sDetails);
@@ -98,6 +107,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
   }
 
 
+
   /* Defining the columns of the table. */
   const columns = [
     {
@@ -108,7 +118,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
         s ? <img src={s} alt="" style={{ height: 32, width: 32 }} /> : "",
     },
     {
-      title: "Title/Artist/Genre",
+      title: "Title/Artist",
       dataIndex: "title",
       key: "title",
       render: (s: string, r: SeedDetailItem, i: number) => (
@@ -153,12 +163,19 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
       key: "actions",
       render: (s: string, record: SeedDetailItem) => (
         <Space>
+          <Popover content={<GenrePopover artistIDs={record.artistIDs} token={token} />} title="Genres" trigger="hover">
+            <a>
+              <FontAwesomeIcon icon={faInfo} size={"lg"} />
+            </a>
+          </Popover>
+
+
           <a>
             <FontAwesomeIcon icon={faTrash} size={"lg"} onClick={() => removeSelf(record)} />
             {/* <DeleteOutlined  /> */}
           </a>
-          <a href={record.uri} target="_blank" rel="noreferrer" style={{ color: "#1DB954" }}>
-            <FontAwesomeIcon icon={faSpotify} size={"lg"} />
+          <a href={record.uri} target="_blank" rel="noreferrer" >
+            <FontAwesomeIcon icon={faSpotify} size={"lg"} style={{ color: "#1DB954" }} />
           </a>
         </Space>
       ),

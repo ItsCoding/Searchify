@@ -165,6 +165,7 @@ const renderTrack = (track: SpotifyTrack) => ({
   type: "track",
   uri: track.external_urls.spotify,
   sthumb: track.album.images[2].url,
+  artistIDs: track.artists.map(art => art.id),
   label: (
     <div
       style={{
@@ -187,13 +188,15 @@ const renderTrack = (track: SpotifyTrack) => ({
   ),
 } as SeedItem);
 
+
 const renderArtist = (artist: SpotifyArtist) => ({
   value: artist.name,
   spotifyseed: artist.uri,
   key: artist.uri,
   type: "artist",
-  sthumb: artist.images[2].url,
+  sthumb: (artist.images.length > 0 ? artist.images[2].url : "" ),
   uri: artist.external_urls.spotify,
+  artistIDs: [artist.id],
   label: (
     <div
       style={{
@@ -205,7 +208,7 @@ const renderArtist = (artist: SpotifyArtist) => ({
       {/* <small>{track.artists.map((artist) => artist.name).join(", ")}</small> */}
       <span>
         <img
-          src={artist.images[2].url}
+          src={(artist.images.length > 0 ? artist.images[2].url : "" )}
           alt="Spotify Thumbnail"
           style={{ height: 32, width: 32 }}
         />
@@ -248,7 +251,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
         )
         .then((result) => {
           const res = result.data[Object.keys(result.data)[0]].items;
-          console.log("Got Result from Spotify ARTISTS", res);
+          // console.log("Got Result from Spotify ARTISTS", res);
           resolve(res);
         });
     });
@@ -267,7 +270,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
         )
         .then((result) => {
           const res = result.data[Object.keys(result.data)[0]].items;
-          console.log("Got Result from Spotify TRACKS", res);
+          // console.log("Got Result from Spotify TRACKS", res);
           resolve(res);
         });
     });
@@ -320,7 +323,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
 
 
   const debouncedChangeHandler = useCallback(
-    debounce(getSearchOptions, 500)
+    debounce(getSearchOptions, 300)
     , []);
 
   /**

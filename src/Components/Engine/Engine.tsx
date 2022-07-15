@@ -283,6 +283,7 @@ const Engine = ({ token }: EngineProps) => {
             key: track.uri,
             resultObject: true,
             url: track.external_urls.spotify,
+            artistIDs: track.artists.map(art => art.id)
           }
           return mappedTrack;
         });

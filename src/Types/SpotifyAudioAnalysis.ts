@@ -18,7 +18,7 @@ type SpotifyAudioAnalysis = {
     valence: number,
     toneKey: number,
     key: number | string,
-    [key: string]: string | number;
+    [key: string]: string | number | string[];
 }
 
 export default SpotifyAudioAnalysis;

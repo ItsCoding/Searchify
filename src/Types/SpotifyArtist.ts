@@ -10,6 +10,7 @@ type SpotifyArtist = {
   images: {
     url: string;
   }[]
+  genres: string[];
 };
 
 export default SpotifyArtist;
