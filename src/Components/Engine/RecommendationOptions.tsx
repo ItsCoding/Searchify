@@ -23,6 +23,8 @@ const recomendationOptions = [
   "valence",
 ];
 
+const sliderIndexes = ["Min","Target","Max"]
+
 
 /* A dictionary that contains the min, max, and step values for the sliders. */
 
@@ -35,11 +37,11 @@ type recommendationSpecials = {
   }
 }
 
-const defaultFormatter = (s: number | undefined): string => {
+const defaultFormatter = (s: number | undefined, index: number): string => {
   if (s === undefined) {
     return "undefined"
   }
-  return s.toFixed(2);
+  return sliderIndexes[index] + ": " + s.toFixed(2);
 };
 
 const recomendationOptionsSpecials: recommendationSpecials = {
@@ -47,25 +49,25 @@ const recomendationOptionsSpecials: recommendationSpecials = {
     from: 0,
     to: 11,
     step: 1,
-    tooltip: (value,index) => PitchClass.keyToPitchClass(value),
+    tooltip: (value,index) => sliderIndexes[index] + ": " + PitchClass.keyToPitchClass(value),
   },
   popularity: {
     from: 0,
     to: 100,
     step: 1,
-    tooltip: (value,index) => defaultFormatter(value)
+    tooltip: (value,index) => defaultFormatter(value,index)
   },
   tempo: {
     from: 0,
     to: 200,
     step: 1,
-    tooltip: (value,index) => defaultFormatter(value)
+    tooltip: (value,index) => defaultFormatter(value,index)
   },
   time_signature: {
     from: 3,
     to: 7,
     step: 1,
-    tooltip: (value,index) => defaultFormatter(value)
+    tooltip: (value,index) => defaultFormatter(value,index)
   },
 };
 
@@ -166,10 +168,16 @@ const RecomendationOption = ({ option, changeOption, optionDict }: Recomendation
         {enabled ? (
           <>
               <Slider
-                
+                sx={{
+                  zIndex: "100",
+                  '& .MuiSlider-thumb': {
+                    width: '15px',
+                    height: '15px'
+                  }
+                }}
                 // defaultValue={[0,0.5,1]}
                 valueLabelDisplay="auto"
-                getAriaValueText={recomendationOptionsSpecials[option]?.tooltip}
+                valueLabelFormat={recomendationOptionsSpecials[option]?.tooltip ?? defaultFormatter}
                 onChange={(event, value) => {
                   if (Array.isArray(value)) {
                     onRangeChange(value)
