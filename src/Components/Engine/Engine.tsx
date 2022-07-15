@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RecomendationOptions from "./RecommendationOptions";
-import { Collapse, Button, message, Form, Row, Col, Tooltip, Slider } from "antd";
+import { Collapse, Button, message, Form, Row, Col, Tooltip, Slider, Spin } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import SeedSearch from "./SeedSearch";
 import axios from "axios";
@@ -66,7 +66,8 @@ const Engine = ({ token }: EngineProps) => {
   const [firstOpenMenu, setFirstOpenMenu] = useState<boolean>(true);
   const [showGuide, setShowGuide] = useState<boolean>(false);
   const [collapseActiveKey, setCollapseActiveKey] = useState<string | string[]>(["0"]);
-
+  const [focusedByTutorial, setFocusedByTutorial] = useState<number>(0);
+  const [loadingTurorial, setLoadingTutorial] = useState<boolean>(false)
   useEffect(() => {
     if (window.localStorage.getItem("tutorial_done") !== "true") {
       startGuide();
@@ -79,10 +80,14 @@ const Engine = ({ token }: EngineProps) => {
 
   const startGuide = () => {
     console.log("Guide started")
+    setLoadingTutorial(true);
     setExpanded(true);
     setCollapseActiveKey("2")
     setTimeout(() => {
-      setShowGuide(true)
+      setLoadingTutorial(false)
+      setTimeout(() => {
+        setShowGuide(true)
+      }, 50);
     }, 500);
 
   }
@@ -90,9 +95,10 @@ const Engine = ({ token }: EngineProps) => {
 
   const stepHandler = (nextStep: number) => {
     console.log(nextStep, "STEP")
+    setFocusedByTutorial(nextStep);
     switch (nextStep) {
       case 2:
-        if(seed.length < 1 || !seed.find(se => se.type === "track")){
+        if (seed.length < 1 || !seed.find(se => se.type === "track")) {
           message.info("Please select a track that you like to continue this tutorial 😄 ")
           return false;
         }
@@ -250,6 +256,7 @@ const Engine = ({ token }: EngineProps) => {
    * the Spotify Audio Features API to get more information about the tracks
    */
   const handleSearch = (opts: RecommendationOptions = options) => {
+    setShowGuide(false);
     if (seed.length === 0) {
       message.warn("You must have at least one seed item");
       return;
@@ -275,238 +282,240 @@ const Engine = ({ token }: EngineProps) => {
         if (result.data.tracks.length < 1) {
           setSearching(false)
           message.warn("Your search is to narrow! Couldn´t find anything that would match...")
-    return;
-  }
-  const mappedResult: Array<TrackItem> = result.data.tracks.map((track: SpotifyTrack) => {
-    const mappedTrack: TrackItem = {
-      title: track.name,
-      artists: track.artists.map((artist: SpotifyArtist) => artist.name).join(", "),
-      album: track.album.name,
-      cover: track.album.images[2].url,
-      uri: track.uri,
-      preview: track.preview_url,
-      duration: track.duration_ms,
-      key: track.uri,
-      resultObject: true,
-      url: track.external_urls.spotify,
-      artistIDs: track.artists.map(art => art.id)
-    }
-    return mappedTrack;
-  });
-  const featuresQuery = mappedResult
-    .map((track) => track.uri.split(":")[2])
-    .join(",");
-  // console.log("Features Query: ", featuresQuery);
-  axios
-    .get(
-      "https://api.spotify.com/v1/audio-features?ids=" + featuresQuery,
-      {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      }
-    )
-    .then((result) => {
-      const sDetails: Array<SpotifyAudioAnalysis> = result.data.audio_features;
-      // console.log("Audio Features: ", sDetails);
-      let i = 0;
-      sDetails.forEach((audioFeature) => {
-        const track = mappedResult.find((t) => t.uri === audioFeature.uri);
-        if (track) {
-          track.toneKey = parseInt(audioFeature.key.toString());
-          track.analysisData = audioFeature;
-          // delete audioFeature.key;
-          Object.keys(audioFeature).forEach((key) => {
-            if (key !== "key") track[key] = audioFeature[key];
-          });
-          track.overlapping = calculateOverlapping(track);
-          i++;
-          // console.log(i, track.name, track.key, track.tempo, audioFeature);
+          return;
         }
+        const mappedResult: Array<TrackItem> = result.data.tracks.map((track: SpotifyTrack) => {
+          const mappedTrack: TrackItem = {
+            title: track.name,
+            artists: track.artists.map((artist: SpotifyArtist) => artist.name).join(", "),
+            album: track.album.name,
+            cover: track.album.images[2].url,
+            uri: track.uri,
+            preview: track.preview_url,
+            duration: track.duration_ms,
+            key: track.uri,
+            resultObject: true,
+            url: track.external_urls.spotify,
+            artistIDs: track.artists.map(art => art.id)
+          }
+          return mappedTrack;
+        });
+        const featuresQuery = mappedResult
+          .map((track) => track.uri.split(":")[2])
+          .join(",");
+        // console.log("Features Query: ", featuresQuery);
+        axios
+          .get(
+            "https://api.spotify.com/v1/audio-features?ids=" + featuresQuery,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
+          )
+          .then((result) => {
+            const sDetails: Array<SpotifyAudioAnalysis> = result.data.audio_features;
+            // console.log("Audio Features: ", sDetails);
+            let i = 0;
+            sDetails.forEach((audioFeature) => {
+              const track = mappedResult.find((t) => t.uri === audioFeature.uri);
+              if (track) {
+                track.toneKey = parseInt(audioFeature.key.toString());
+                track.analysisData = audioFeature;
+                // delete audioFeature.key;
+                Object.keys(audioFeature).forEach((key) => {
+                  if (key !== "key") track[key] = audioFeature[key];
+                });
+                track.overlapping = calculateOverlapping(track);
+                i++;
+                // console.log(i, track.name, track.key, track.tempo, audioFeature);
+              }
+            });
+            setSearching(false);
+            setSearchResults(mappedResult);
+            // console.log(sDetails, "Analysis Result ######");
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error("Error searching for recommendations");
+        setSearching(false);
       });
-      setSearching(false);
-      setSearchResults(mappedResult);
-      // console.log(sDetails, "Analysis Result ######");
-    });
-})
-      .catch ((err) => {
-  console.log(err);
-  message.error("Error searching for recommendations");
-  setSearching(false);
-});
   };
-return (
-  <div style={{ paddingLeft: 15, paddingRight: 15 }}>
-    <Steps
-      enabled={showGuide}
-      steps={steps}
-      initialStep={0}
-      onExit={() => { setShowGuide(false) }}
-      onBeforeChange={stepHandler}
+  return (
+    <Spin spinning={loadingTurorial} size="large" tip="Preparing tutorial...">
+      <div style={{ paddingLeft: 15, paddingRight: 15 }}>
+        <Steps
+          enabled={showGuide}
+          steps={steps}
+          initialStep={0}
+          onExit={() => { setShowGuide(false) }}
+          onBeforeChange={stepHandler}
 
-    />
-    <Row>
-      <Col span={expanded ? 16 : 23}>
-        <div style={{ paddingBottom: 15 }}>
-          <Form layout="inline">
-            <Form.Item>
-              <SeedSearch
-
-                token={token}
-                setSelectedSeeds={setSeed}
-                selectedSeeds={seed}
-              />
-            </Form.Item>
-            {/* <Form.Item>
+        />
+        <Row>
+          <Col span={expanded ? 16 : 23}>
+            <div style={{ paddingBottom: 15 }}>
+              <Form layout="inline">
+                <Form.Item>
+                  <SeedSearch
+                    focusedByTutorial={focusedByTutorial}
+                    token={token}
+                    setSelectedSeeds={setSeed}
+                    selectedSeeds={seed}
+                  />
+                </Form.Item>
+                {/* <Form.Item>
                
               </Form.Item> */}
-          </Form>
-        </div>
-        <div style={{ paddingBottom: 15 }}>
-          <SeedTable
-            seedDetails={seedDetails}
-            setSeedDetails={setSeedDetails}
-            seeds={seed}
-            token={token}
-            setSeed={setSeed}
-          />
-        </div>
+              </Form>
+            </div>
+            <div style={{ paddingBottom: 15 }}>
+              <SeedTable
+                seedDetails={seedDetails}
+                setSeedDetails={setSeedDetails}
+                seeds={seed}
+                token={token}
+                setSeed={setSeed}
+              />
+            </div>
 
-        <Collapse style={{ marginBottom: 15 }} activeKey={collapseActiveKey} onChange={(changeKey) => setCollapseActiveKey(changeKey)}>
-          {/* <Panel header="Seed Details" key="1">
+            <Collapse style={{ marginBottom: 15 }} activeKey={collapseActiveKey} onChange={(changeKey) => setCollapseActiveKey(changeKey)}>
+              {/* <Panel header="Seed Details" key="1">
             
         </Panel> */}
-          <Panel header="Search parameter" key="2">
-            <RecomendationOptions
-              expanded={expanded}
-              setOptions={setOptions}
-              options={options}
-            />
-          </Panel>
-        </Collapse>
-        <Row style={{
-          marginBottom: 15,
-        }}>
-          <Col span={12}>
-            <Form layout="inline" >
-              <Form.Item>
-                <Button
-                  id="wish_me_luck"
-                  style={{
-                    backgroundColor: "#2e7d32",
-                    borderColor: "#2e7d32",
-                  }}
-                  loading={searching}
-                  type="primary"
-                  onClick={() => handleSearch()}
-                >
-                  <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
-                </Button>
-              </Form.Item>
-              {/* <div id="exact_match_tools"> */}
-              <Form.Item>
-                <Button
-                  className="exact_match_tools"
-                  loading={searching}
-                  type="primary"
-                  onClick={exactMatch}
-                >
-                  <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
-                </Button>
-              </Form.Item>
-              <Form.Item style={{ minWidth: 150 }} label={<Tooltip placement="bottom" title={rangeHelp}>Range</Tooltip>}>
-                <Slider className="exact_match_tools" min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
-              </Form.Item>
-              {/* </div> */}
-
-            </Form>
-          </Col>
-          <Col offset={10} span={2}>
-
-            <Button type="default"
-              loading={addAllLoading}
-              onClick={addAllToQueue}
-              style={{ float: "right" }}>
-              {addAllLoading ? `Adding ... ${addAllCount.count}/${addAllCount.max}` : "Add all to Queue"}
-            </Button>
-
-          </Col>
-        </Row>
-
-
-
-
-
-        <ResultTable
-          // tableDetail={tableDetail}
-          setTableDetail={setTableDetail}
-          data={searchResults}
-          seeds={seed}
-          setSeed={setSeed}
-          token={token}
-          seedDetails={seedDetails}
-        // setPlaySong={setPlaySong}
-        />
-      </Col>
-      {/* <Tooltip placement="topRight" title={"Open Me :)"} visible={firstOpenMenu} trigger={"contextMenu"}> */}
-      <Button
-        style={{
-          position: "fixed",
-          top: "45vh",
-          right: expanded ? "" : "25px",
-          left: expanded ? "67%" : "",
-          zIndex: 100,
-          width: "40px"
-        }}
-        onClick={() => {
-          setFirstOpenMenu(false)
-          setExpanded((prev) => !prev)
-        }}>{!expanded ? <LeftOutlined /> : <RightOutlined />}</Button>
-      {/* </Tooltip> */}
-
-
-      {expanded ? (
-        <Col span={8}>
-          <div style={{ height: "100vh" }}>
-            <div style={{ position: "fixed", top: "16vh", width: "33%" }}>
-              <div style={{ marginLeft: 15, marginRight: 15, marginTop: 45 }}>
-                <h3>Audio Features  <small style={{ color: "#545454" }}>provided by <FontAwesomeIcon icon={faSpotify} size={"sm"}></FontAwesomeIcon></small></h3>
-                <hr />
-              </div>
-              <SeedRadar selected={tableDetail} data={seedDetails} />
-              <div style={{ marginLeft: 15, marginTop: "50px" }}>
-                <SpotifyPlayer
-                  token={token}
-                  showSaveIcon={true}
-                  syncExternalDevice={true}
-                  autoPlay={true}
-                  name={"Searchify - WebPlayer"}
-                  syncExternalDeviceInterval={10}
-                  // uris={playSong}
-                  styles={{
-                    // height: 120,
-                    activeColor: "#00000",
-                    bgColor: "#0000",
-                    color: "#fff",
-                    loaderColor: "#fff",
-                    sliderHandleColor: "#ffff",
-                    sliderColor: "#1cb954",
-                    trackArtistColor: "#ccc",
-                    trackNameColor: "#fff",
-                    errorColor: "#fff",
-                  }}
+              <Panel header="Search parameter" key="2">
+                <RecomendationOptions
+                  expanded={expanded}
+                  setOptions={setOptions}
+                  options={options}
                 />
+              </Panel>
+            </Collapse>
+            <Row style={{
+              marginBottom: 15,
+            }}>
+              <Col span={12}>
+                <Form layout="inline" >
+                  <Form.Item>
+                    <Button
+                      id="wish_me_luck"
+                      style={{
+                        backgroundColor: "#2e7d32",
+                        borderColor: "#2e7d32",
+                      }}
+                      loading={searching}
+                      type="primary"
+                      onClick={() => handleSearch()}
+                    >
+                      <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
+                    </Button>
+                  </Form.Item>
+                  {/* <div id="exact_match_tools"> */}
+                  <Form.Item>
+                    <Button
+                      className="exact_match_tools"
+                      loading={searching}
+                      type="primary"
+                      onClick={exactMatch}
+                    >
+                      <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
+                    </Button>
+                  </Form.Item>
+                  <Form.Item style={{ minWidth: 150 }} label={<Tooltip placement="bottom" title={rangeHelp}>Range</Tooltip>}>
+                    <Slider className="exact_match_tools" min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
+                  </Form.Item>
+                  {/* </div> */}
+
+                </Form>
+              </Col>
+              <Col offset={10} span={2}>
+
+                <Button type="default"
+                  loading={addAllLoading}
+                  onClick={addAllToQueue}
+                  style={{ float: "right" }}>
+                  {addAllLoading ? `Adding ... ${addAllCount.count}/${addAllCount.max}` : "Add all to Queue"}
+                </Button>
+
+              </Col>
+            </Row>
+
+
+
+
+
+            <ResultTable
+              // tableDetail={tableDetail}
+              setTableDetail={setTableDetail}
+              data={searchResults}
+              seeds={seed}
+              setSeed={setSeed}
+              token={token}
+              seedDetails={seedDetails}
+            // setPlaySong={setPlaySong}
+            />
+          </Col>
+          {/* <Tooltip placement="topRight" title={"Open Me :)"} visible={firstOpenMenu} trigger={"contextMenu"}> */}
+          <Button
+            style={{
+              position: "fixed",
+              top: "45vh",
+              right: expanded ? "" : "25px",
+              left: expanded ? "67%" : "",
+              zIndex: 100,
+              width: "40px"
+            }}
+            onClick={() => {
+              setFirstOpenMenu(false)
+              setExpanded((prev) => !prev)
+            }}>{!expanded ? <LeftOutlined /> : <RightOutlined />}</Button>
+          {/* </Tooltip> */}
+
+
+          {expanded ? (
+            <Col span={8}>
+              <div style={{ height: "100vh" }}>
+                <div style={{ position: "fixed", top: "16vh", width: "33%" }}>
+                  <div style={{ marginLeft: 15, marginRight: 15, marginTop: 45 }}>
+                    <h3>Audio Features  <small style={{ color: "#545454" }}>provided by <FontAwesomeIcon icon={faSpotify} size={"sm"}></FontAwesomeIcon></small></h3>
+                    <hr />
+                  </div>
+                  <SeedRadar selected={tableDetail} data={seedDetails} />
+                  <div style={{ marginLeft: 15, marginTop: "50px" }}>
+                    <SpotifyPlayer
+                      token={token}
+                      showSaveIcon={true}
+                      syncExternalDevice={true}
+                      autoPlay={true}
+                      name={"Searchify - WebPlayer"}
+                      syncExternalDeviceInterval={10}
+                      // uris={playSong}
+                      styles={{
+                        // height: 120,
+                        activeColor: "#00000",
+                        bgColor: "#0000",
+                        color: "#fff",
+                        loaderColor: "#fff",
+                        sliderHandleColor: "#ffff",
+                        sliderColor: "#1cb954",
+                        trackArtistColor: "#ccc",
+                        trackNameColor: "#fff",
+                        errorColor: "#fff",
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </Col>
-      ) : (
-        ""
-      )}
-    </Row>
-    <Footer addition={<> | <a onClick={() => startGuide()}>Tutorial</a></>} />
-  </div >
-);
+            </Col>
+          ) : (
+            ""
+          )}
+        </Row>
+        <Footer addition={<> | <a onClick={() => startGuide()}>Tutorial</a></>} />
+      </div >
+    </Spin>
+  );
 };
 
 export default Engine;

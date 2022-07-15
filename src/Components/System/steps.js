@@ -1,11 +1,14 @@
 export const steps = [
   {
     // element: "#seed_search",
+    // element: ".seed_search",
+    // position: "bottom",
     intro:
       "Do you wanna know what you can do here?👀 Otherwise you can just close this guide 👍",
     title: "Welcome 🙋‍♂️",
     // position: "center",
     tooltipClass: "myTooltipClass",
+    highlightClass: "myHighlightClass",
   },
   {
     element: ".seed_search",

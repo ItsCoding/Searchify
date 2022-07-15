@@ -220,7 +220,8 @@ const renderArtist = (artist: SpotifyArtist) => ({
 type SeedSearchProps = {
   token: string,
   setSelectedSeeds: Dispatch<SetStateAction<SeedItem[]>>,
-  selectedSeeds: SeedItem[]
+  selectedSeeds: SeedItem[],
+  focusedByTutorial: number
 }
 
 type SearchOption = {
@@ -228,7 +229,7 @@ type SearchOption = {
   options: Array<SeedItem>
 }
 
-const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps) => {
+const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds, focusedByTutorial }: SeedSearchProps) => {
   const [options, setOptions] = useState<SearchOption[]>([]);
 
   /**
@@ -355,7 +356,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
       onSelect={onSelect}
       className="seed_search"
       style={{
-        zIndex: "110"
+        zIndex: focusedByTutorial === 1? "110" : "90"
       }}
     >
       <Input
@@ -363,7 +364,7 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds }: SeedSearchProps)
         data-intro='Hello step one!'
         onChange={(e) => debouncedChangeHandler(encodeURIComponent(e.target.value))}
         placeholder="Track,Gerne,Artist..."
-        style={{ width: 700, zIndex: 100 }}
+        style={{ width: 700, zIndex: focusedByTutorial === 1? "110" : "90" }}
       />
     </AutoComplete>
   );

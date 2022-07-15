@@ -215,7 +215,7 @@ const ResultTable = ({
       key: "action",
       render: (text: string, record: TrackItem) => (
         <Space size="middle">
-          <Tooltip placement="top" title={"Play track"}>
+          <Tooltip placement="top" title={"Play track (needs Spotify open and running)"}>
             <a onClick={() => playSong(record.uri)}>
               {/* <PlayCircleOutlined style={{ fontSize: "18px" }} /> */}
               <FontAwesomeIcon icon={faPlay} size={"lg"} />

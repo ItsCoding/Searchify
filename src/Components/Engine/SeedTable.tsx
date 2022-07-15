@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useEffect } from "react";
-import { Table, Badge, Space, Popover, Button } from "antd";
+import { Table, Badge, Space, Popover, Button, Tooltip } from "antd";
 import axios from "axios";
 
 import PitchClass from "../../System/PitchClass";
@@ -122,11 +122,14 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
       dataIndex: "title",
       key: "title",
       render: (s: string, r: SeedDetailItem, i: number) => (
-        <Badge
-          className="site-badge-count-109"
-          count={s}
-          style={{ backgroundColor: seedColors[i] }}
-        />
+        <Tooltip title={s}>
+          <Badge
+            className="site-badge-count-109"
+            count={s.substring(0, 60) + '...'}
+            style={{ backgroundColor: seedColors[i] }}
+          />
+        </Tooltip>
+
       ),
     },
     {
