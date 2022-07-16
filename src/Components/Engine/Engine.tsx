@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RecomendationOptions from "./RecommendationOptions";
-import { Collapse, Button, message, Form, Row, Col, Tooltip, Slider, Spin } from "antd";
+import { Collapse, Button, message, Form, Row, Col, Tooltip, Slider, Spin, Alert } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import SeedSearch from "./SeedSearch";
 import axios from "axios";
@@ -483,7 +483,7 @@ const Engine = ({ token }: EngineProps) => {
                   </div>
                   <SeedRadar selected={tableDetail} data={seedDetails} />
                   <div style={{ marginLeft: 15, marginTop: "50px" }}>
-                    <SpotifyPlayer
+                    {/* <SpotifyPlayer
                       token={token}
                       showSaveIcon={true}
                       syncExternalDevice={true}
@@ -503,7 +503,8 @@ const Engine = ({ token }: EngineProps) => {
                         trackNameColor: "#fff",
                         errorColor: "#fff",
                       }}
-                    />
+                    /> */}
+                    <Alert message="Spotify changed something on their side... Player is temporarily deactivated" type="warning"/>
                   </div>
                 </div>
               </div>
