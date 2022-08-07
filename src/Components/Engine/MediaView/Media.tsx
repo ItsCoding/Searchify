@@ -101,6 +101,8 @@ export const MediaView = ({ token, seeds, setSeed, seedDetails, visible }: Media
                     <TreeSidebar selectPlaylist={setPlaylist} token={token} />
                 </Col>
                 <Col span={18}>
+                    {playlistData ? <h1>{focusedPlaylist?.name}</h1> : null}
+                    {focusedPlaylist?.description ? <p>{focusedPlaylist.description}</p> : null}
                     {/* <Row gutter={24}>
                         <Col span={4}>
                             <PlayTime data={playlistData} />
