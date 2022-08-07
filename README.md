@@ -12,6 +12,7 @@ Special Thanks to the following Libarys/Companys:
 - [Typescript](https://www.typescriptlang.org "Typescript") - Makes things better and more stable :D
 - [Ant Design](https://ant.design "Ant Design") - Component library of choice
 - [Axios](https://axios-http.com "Axios") - Making HTTP(s) request a lot easier
+- [@daniel-faber/json-ts](https://www.npmjs.com/package/@daniel-faber/json-ts "@daniel-faber/json-ts") - JSON validation and parsing for TypeScript
 - [Lodash](https://lodash.com "Lodash") - Debouncing search input
 - [Fontawsome](https://fontawesome.com "Fontawsome") - Icon libary
 - [MUI](https://mui.com "MUI") - The only ones with a multi dot slider 

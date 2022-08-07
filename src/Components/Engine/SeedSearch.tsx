@@ -347,7 +347,6 @@ const SeedSearch = ({ token, setSelectedSeeds, selectedSeeds, focusedByTutorial 
       message.warning("Only five artists, songs or genres can be selected");
     }
   };
-
   return (
     <AutoComplete
       dropdownClassName="certain-category-search-dropdown"

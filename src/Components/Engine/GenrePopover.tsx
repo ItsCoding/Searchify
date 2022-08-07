@@ -60,8 +60,6 @@ const GenrePopover = ({ artistIDs, token }: GenrePopoverType) => {
             }
         })
     }, [])
-
-
     return (<>
         <ul>
             {genres.map(gen => (

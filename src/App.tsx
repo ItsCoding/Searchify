@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Login from "./Components/System/Login";
-import Engine from "./Components/Engine/Engine";
-import { PageHeader, message } from "antd";
+import {Engine, ActiveKeyEnum} from "./Components/Engine/Engine";
+import { PageHeader, message, Menu } from "antd";
 import "./App.css";
 import './styles/introjs.min.css';
 import "antd/dist/antd.dark.min.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import Footer from "./Components/System/Footer";
+import { MediaView } from "./Components/Engine/MediaView/Media";
 
 const stateKey = "spotify_auth_state-x43kdwe3ay";
 
@@ -21,19 +22,10 @@ const fqdn: string =
  * It returns a PageHeader component from Ant Design
  * @returns A PageHeader component from Ant Design.
  */
-const Header = () => {
-  return (
-    <PageHeader
-      className="site-page-header"
-      title="Searchify"
-      subTitle="A more advanced search for Spotify"
-    />
-  );
-};
 
 function App() {
   const [token, setToken] = useState("");
-
+  const [activeKey, setActiveKey] = useState<string>(ActiveKeyEnum.SEARCH);
   /* Get the token from spotify and start the valdation timeout */
   useEffect(() => {
     const queryString = window.location.href.split("#")[1];
@@ -53,6 +45,34 @@ function App() {
     }
   }, []);
 
+  const HeaderMenu = () => (<>
+    <Menu
+      mode="horizontal"
+      style={{
+        background: "transparent",
+        width: "10rem"
+      }}
+      selectedKeys={[activeKey]}
+      onSelect={({ key }) => {
+        setActiveKey(key);
+      }}>
+      <Menu.Item key={ActiveKeyEnum.SEARCH}>Search</Menu.Item>
+      <Menu.Item key={ActiveKeyEnum.MEDIA}>Libary</Menu.Item>
+    </Menu>
+  </>)
+
+  const Header = () => {
+    return (
+      <PageHeader
+        className="site-page-header"
+        title="Searchify"
+        subTitle="A more advanced search for Spotify"
+        extra={token !== "" ? <HeaderMenu /> : null}
+      />
+    );
+  };
+
+
 
 
   return (
@@ -65,7 +85,7 @@ function App() {
       ) : (
         <>
           <Header />
-          <Engine token={token} />
+          <Engine activeKey={activeKey} token={token} />
         </>
       )}
 

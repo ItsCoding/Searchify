@@ -45,6 +45,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
   useEffect(() => {
     let seedQuery = "";
     if (seeds.length < 1) {
+      console.log("SET SEED 1")
       setSeedDetails([]);
       return;
     }
@@ -60,6 +61,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
           artistIDs: item.artistIDs ?? []
         });
       });
+      console.log("SET SEED 2")
       setSeedDetails(sDetails);
     }
     seeds.forEach((item) => {
@@ -90,6 +92,7 @@ const SeedTable = ({ seeds, token, setSeed, seedDetails, setSeedDetails }: SeedT
             artistIDs: item.artistIDs ?? []
           });
         });
+        console.log("SET SEED 3")
         setSeedDetails(sDetails);
       });
   }, [seeds]);

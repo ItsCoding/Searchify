@@ -46,6 +46,7 @@ const Login: React.FunctionComponent<LoginProps> = ({ fqdn, stateKey }) => {
             user-read-private \
             user-read-playback-state \
             user-modify-playback-state \
+            playlist-read-private \
             user-library-read \
             user-library-modify";
 

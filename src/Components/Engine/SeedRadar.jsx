@@ -109,7 +109,6 @@ const SeedRadar = ({ data, selected = [] }) => {
     });
     return result;
   };
-
   return (
     <div id="seed_radar">
       {data.length < 1 ? (

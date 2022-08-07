@@ -21,6 +21,7 @@ import { faClover, faMapPin } from "@fortawesome/free-solid-svg-icons";
 import { Steps, Hints } from 'intro.js-react';
 import { steps } from "../System/steps"
 import Footer from "../System/Footer"
+import { MediaView } from "./MediaView/Media";
 const { Panel } = Collapse;
 
 // const steps = [
@@ -42,7 +43,8 @@ const { Panel } = Collapse;
 // ];
 
 type EngineProps = {
-  token: string
+  token: string,
+  activeKey: string
 }
 
 type AllCount = {
@@ -50,7 +52,14 @@ type AllCount = {
   count: number
 }
 
-const Engine = ({ token }: EngineProps) => {
+export enum ActiveKeyEnum {
+  SEARCH = "1",
+  MEDIA = "2"
+}
+
+
+export const Engine = ({ token, activeKey }: EngineProps) => {
+
   const [options, setOptions] = useState<RecommendationOptions>({});
   // const [playSong, setPlaySong] = useState([]);
   const [seed, setSeed] = useState<Array<SeedItem>>([]);
@@ -68,6 +77,8 @@ const Engine = ({ token }: EngineProps) => {
   const [collapseActiveKey, setCollapseActiveKey] = useState<string | string[]>(["0"]);
   const [focusedByTutorial, setFocusedByTutorial] = useState<number>(0);
   const [loadingTurorial, setLoadingTutorial] = useState<boolean>(false)
+
+
   useEffect(() => {
     if (window.localStorage.getItem("tutorial_done") !== "true") {
       startGuide();
@@ -342,148 +353,153 @@ const Engine = ({ token }: EngineProps) => {
         setSearching(false);
       });
   };
-  return (
-    <Spin spinning={loadingTurorial} size="large" tip="Preparing tutorial...">
-      <div style={{ paddingLeft: 15, paddingRight: 15 }}>
-        <Steps
-          enabled={showGuide}
-          steps={steps}
-          initialStep={0}
-          onExit={() => { setShowGuide(false) }}
-          onBeforeChange={stepHandler}
+  // const EngineView = () =>
+  return (<>
 
-        />
-        <Row>
-          <Col span={expanded ? 16 : 23}>
-            <div style={{ paddingBottom: 15 }}>
-              <Form layout="inline">
-                <Form.Item>
-                  <SeedSearch
-                    focusedByTutorial={focusedByTutorial}
-                    token={token}
-                    setSelectedSeeds={setSeed}
-                    selectedSeeds={seed}
-                  />
-                </Form.Item>
-                {/* <Form.Item>
+    <div style={{
+      display: activeKey === ActiveKeyEnum.SEARCH ? "block" : "none",
+    }}>
+      <Spin spinning={loadingTurorial} size="large" tip="Preparing tutorial...">
+        <div style={{ paddingLeft: 15, paddingRight: 15 }}>
+          <Steps
+            enabled={showGuide}
+            steps={steps}
+            initialStep={0}
+            onExit={() => { setShowGuide(false) }}
+            onBeforeChange={stepHandler}
+
+          />
+          <Row>
+            <Col span={expanded ? 16 : 23}>
+              <div style={{ paddingBottom: 15 }}>
+                <Form layout="inline">
+                  <Form.Item>
+                    <SeedSearch
+                      focusedByTutorial={focusedByTutorial}
+                      token={token}
+                      setSelectedSeeds={setSeed}
+                      selectedSeeds={seed}
+                    />
+                  </Form.Item>
+                  {/* <Form.Item>
                
               </Form.Item> */}
-              </Form>
-            </div>
-            <div style={{ paddingBottom: 15 }}>
-              <SeedTable
-                seedDetails={seedDetails}
-                setSeedDetails={setSeedDetails}
-                seeds={seed}
-                token={token}
-                setSeed={setSeed}
-              />
-            </div>
+                </Form>
+              </div>
+              <div style={{ paddingBottom: 15 }}>
+                <SeedTable
+                  seedDetails={seedDetails}
+                  setSeedDetails={setSeedDetails}
+                  seeds={seed}
+                  token={token}
+                  setSeed={setSeed}
+                />
+              </div>
 
-            <Collapse style={{ marginBottom: 15 }} activeKey={collapseActiveKey} onChange={(changeKey) => setCollapseActiveKey(changeKey)}>
-              {/* <Panel header="Seed Details" key="1">
+              <Collapse style={{ marginBottom: 15 }} activeKey={collapseActiveKey} onChange={(changeKey) => setCollapseActiveKey(changeKey)}>
+                {/* <Panel header="Seed Details" key="1">
             
         </Panel> */}
-              <Panel header="Search parameter" key="2">
-                <RecomendationOptions
-                  expanded={expanded}
-                  setOptions={setOptions}
-                  options={options}
-                />
-              </Panel>
-            </Collapse>
-            <Row style={{
-              marginBottom: 15,
-            }}>
-              <Col span={12}>
-                <Form layout="inline" >
-                  <Form.Item>
-                    <Button
-                      id="wish_me_luck"
-                      style={{
-                        backgroundColor: "#2e7d32",
-                        borderColor: "#2e7d32",
-                      }}
-                      loading={searching}
-                      type="primary"
-                      onClick={() => handleSearch()}
-                    >
-                      <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
-                    </Button>
-                  </Form.Item>
-                  {/* <div id="exact_match_tools"> */}
-                  <Form.Item>
-                    <Button
-                      className="exact_match_tools"
-                      loading={searching}
-                      type="primary"
-                      onClick={exactMatch}
-                    >
-                      <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
-                    </Button>
-                  </Form.Item>
-                  <Form.Item style={{ minWidth: 150 }} label={<Tooltip placement="bottom" title={rangeHelp}>Range</Tooltip>}>
-                    <Slider className="exact_match_tools" min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
-                  </Form.Item>
-                  {/* </div> */}
+                <Panel header="Search parameter" key="2">
+                  <RecomendationOptions
+                    expanded={expanded}
+                    setOptions={setOptions}
+                    options={options}
+                  />
+                </Panel>
+              </Collapse>
+              <Row style={{
+                marginBottom: 15,
+              }}>
+                <Col span={12}>
+                  <Form layout="inline" >
+                    <Form.Item>
+                      <Button
+                        id="wish_me_luck"
+                        style={{
+                          backgroundColor: "#2e7d32",
+                          borderColor: "#2e7d32",
+                        }}
+                        loading={searching}
+                        type="primary"
+                        onClick={() => handleSearch()}
+                      >
+                        <FontAwesomeIcon icon={faClover} style={{ marginRight: 5 }} />Wish me luck!
+                      </Button>
+                    </Form.Item>
+                    {/* <div id="exact_match_tools"> */}
+                    <Form.Item>
+                      <Button
+                        className="exact_match_tools"
+                        loading={searching}
+                        type="primary"
+                        onClick={exactMatch}
+                      >
+                        <FontAwesomeIcon icon={faMapPin} style={{ marginRight: 5 }} />Exact match
+                      </Button>
+                    </Form.Item>
+                    <Form.Item style={{ minWidth: 150 }} label={<Tooltip placement="bottom" title={rangeHelp}>Range</Tooltip>}>
+                      <Slider className="exact_match_tools" min={0} max={1} step={0.01} defaultValue={0.1} onChange={val => setMatchRange(val)} />
+                    </Form.Item>
+                    {/* </div> */}
 
-                </Form>
-              </Col>
-              <Col offset={10} span={2}>
+                  </Form>
+                </Col>
+                <Col offset={10} span={2}>
 
-                <Button type="default"
-                  loading={addAllLoading}
-                  onClick={addAllToQueue}
-                  style={{ float: "right" }}>
-                  {addAllLoading ? `Adding ... ${addAllCount.count}/${addAllCount.max}` : "Add all to Queue"}
-                </Button>
+                  <Button type="default"
+                    loading={addAllLoading}
+                    onClick={addAllToQueue}
+                    style={{ float: "right" }}>
+                    {addAllLoading ? `Adding ... ${addAllCount.count}/${addAllCount.max}` : "Add all to Queue"}
+                  </Button>
 
-              </Col>
-            </Row>
-
-
+                </Col>
+              </Row>
 
 
 
-            <ResultTable
-              // tableDetail={tableDetail}
-              setTableDetail={setTableDetail}
-              data={searchResults}
-              seeds={seed}
-              setSeed={setSeed}
-              token={token}
-              seedDetails={seedDetails}
-            // setPlaySong={setPlaySong}
-            />
-          </Col>
-          {/* <Tooltip placement="topRight" title={"Open Me :)"} visible={firstOpenMenu} trigger={"contextMenu"}> */}
-          <Button
-            style={{
-              position: "fixed",
-              top: "45vh",
-              right: expanded ? "" : "25px",
-              left: expanded ? "67%" : "",
-              zIndex: 100,
-              width: "40px"
-            }}
-            onClick={() => {
-              setFirstOpenMenu(false)
-              setExpanded((prev) => !prev)
-            }}>{!expanded ? <LeftOutlined /> : <RightOutlined />}</Button>
-          {/* </Tooltip> */}
 
 
-          {expanded ? (
-            <Col span={8}>
-              <div style={{ height: "100vh" }}>
-                <div style={{ position: "fixed", top: "16vh", width: "33%" }}>
-                  <div style={{ marginLeft: 15, marginRight: 15, marginTop: 45 }}>
-                    <h3>Audio Features  <small style={{ color: "#545454" }}>provided by <FontAwesomeIcon icon={faSpotify} size={"sm"}></FontAwesomeIcon></small></h3>
-                    <hr />
-                  </div>
-                  <SeedRadar selected={tableDetail} data={seedDetails} />
-                  <div style={{ marginLeft: 15, marginTop: "50px" }}>
-                    {/* <SpotifyPlayer
+              <ResultTable
+                // tableDetail={tableDetail}
+                setTableDetail={setTableDetail}
+                data={searchResults}
+                seeds={seed}
+                setSeed={setSeed}
+                token={token}
+                seedDetails={seedDetails}
+              // setPlaySong={setPlaySong}
+              />
+            </Col>
+            {/* <Tooltip placement="topRight" title={"Open Me :)"} visible={firstOpenMenu} trigger={"contextMenu"}> */}
+            <Button
+              style={{
+                position: "fixed",
+                top: "45vh",
+                right: expanded ? "" : "25px",
+                left: expanded ? "67%" : "",
+                zIndex: 100,
+                width: "40px"
+              }}
+              onClick={() => {
+                setFirstOpenMenu(false)
+                setExpanded((prev: any) => !prev)
+              }}>{!expanded ? <LeftOutlined /> : <RightOutlined />}</Button>
+            {/* </Tooltip> */}
+
+
+            {expanded ? (
+              <Col span={8}>
+                <div style={{ height: "100vh" }}>
+                  <div style={{ position: "fixed", top: "16vh", width: "33%" }}>
+                    <div style={{ marginLeft: 15, marginRight: 15, marginTop: 45 }}>
+                      <h3>Audio Features  <small style={{ color: "#545454" }}>provided by <FontAwesomeIcon icon={faSpotify} size={"sm"}></FontAwesomeIcon></small></h3>
+                      <hr />
+                    </div>
+                    <SeedRadar selected={tableDetail} data={seedDetails} />
+                    <div style={{ marginLeft: 15, marginTop: "50px" }}>
+                      {/* <SpotifyPlayer
                       token={token}
                       showSaveIcon={true}
                       syncExternalDevice={true}
@@ -504,19 +520,19 @@ const Engine = ({ token }: EngineProps) => {
                         errorColor: "#fff",
                       }}
                     /> */}
-                    <Alert message="Spotify changed something on their side... Player is temporarily deactivated" type="warning"/>
+                      <Alert message="Spotify changed something on their side... Player is temporarily deactivated" type="warning" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Col>
-          ) : (
-            ""
-          )}
-        </Row>
-        <Footer addition={<> | <a onClick={() => startGuide()}>Tutorial</a></>} />
-      </div >
-    </Spin>
-  );
+              </Col>
+            ) : (
+              ""
+            )}
+          </Row>
+          <Footer addition={<> | <a onClick={() => startGuide()}>Tutorial</a></>} />
+        </div >
+      </Spin>
+    </div>
+    <MediaView seedDetails={seedDetails} seeds={seed} setSeed={setSeed} token={token} visible={activeKey === ActiveKeyEnum.MEDIA} />
+  </>);
 };
-
-export default Engine;

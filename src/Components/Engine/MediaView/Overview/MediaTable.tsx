@@ -8,16 +8,16 @@ import {
   EyeOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import PitchClass from "../../System/PitchClass";
-import { mapTitleToHelp } from "../../System/Help";
+import PitchClass from "../../../../System/PitchClass";
+import { mapTitleToHelp } from "../../../../System/Help";
 import { Dispatch } from "react";
-import { SeedItem, SeedType } from "../../Types/SeedItem";
-import TrackItem from "../../Types/TrackItem";
+import { SeedItem, SeedType } from "../../../../Types/SeedItem";
+import TrackItem from "../../../../Types/TrackItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { brands } from '@fortawesome/fontawesome-svg-core/import.macro' // <-- import styles to be used
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 import { faPlusCircle, faPlay, faBarsStaggered } from "@fortawesome/free-solid-svg-icons";
-import SeedDetailItem from "../../Types/SeedDetailItem";
+import SeedDetailItem from "../../../../Types/SeedDetailItem";
 
 
 /**
@@ -32,89 +32,23 @@ const millisToMinutesAndSeconds = (millis: number) => {
 };
 
 
-type ResultTableProps = {
-  data: Array<TrackItem>,
-  token: string,
+type MediaTableProps = {
+  data: Array<TrackItem> | null,
+//   token: string,
   // tableDetail,
-  setTableDetail: Dispatch<SetStateAction<TrackItem[]>>,
+  setGraphItem: Dispatch<SetStateAction<TrackItem[]>>,
   seeds: Array<SeedItem>,
   setSeed: Dispatch<SetStateAction<SeedItem[]>>,
   seedDetails: Array<SeedDetailItem>,
   // setPlaySong: Dispatch<any>
 }
 
-const ResultTable = ({
+const MediaTable = ({
   data,
-  token,
-  // tableDetail,
-  setTableDetail,
+  setGraphItem,
   seeds,
   setSeed,
-  seedDetails
-  // setPlaySong
-}: ResultTableProps) => {
-  /**
-   * It takes in a song id, and then uses the Spotify API to play that song
-   * @param id - The id of the song you want to play
-   */
-  const playSong = (id: string) => {
-    axios
-      .put(
-        `https://api.spotify.com/v1/me/player/play`,
-        {
-          uris: [id],
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
-      .then((result) => {
-        // console.log(result.data);
-      });
-  };
-
-  /**
-   * It takes in a Spotify track ID, and adds it to the user's queue
-   * @param id - the id of the song you want to add to the queue
-   */
-  const addToQueue = (id: string) => {
-    axios({
-      url: `https://api.spotify.com/v1/me/player/queue?uri=${id}`,
-      method: "post",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    }).then((result) => {
-      // console.log(result.data);
-      message.success("Added to queue!");
-    });
-  };
-
-
-  const SimilarProgress = ({ percent }: { percent: number }) => {
-    return (
-      <Tooltip title={`${percent}%`}>
-        <Progress
-          strokeColor={{
-            from: '#108ee9',
-            to: '#52c41a',
-          }}
-          // steps={50}
-          size="small"
-          // strokeColor="#52c41a"
-          percent={percent}
-          status="active"
-          showInfo={false}
-          style={{
-            minWidth: 50
-          }}
-        />
-      </Tooltip>
-
-    )
-  }
+}: MediaTableProps) => {
 
 
   /* Defining the columns of the table. */
@@ -132,20 +66,20 @@ const ResultTable = ({
       dataIndex: "title",
       key: "title",
       render: (text: string) => <p>{text}</p>,
-      sorter: {
-        compare: (a: TrackItem, b: TrackItem) => a.title.localeCompare(b.title),
-        // multiple: 5,
-      },
+    //   sorter: {
+    //     compare: (a: TrackItem, b: TrackItem) => a.title.localeCompare(b.title),
+    //     // multiple: 5,
+    //   },
     },
     {
       title: "Artists",
       dataIndex: "artists",
       key: "artists",
       // ellipsis: true,
-      sorter: {
-        compare: (a: TrackItem, b: TrackItem) => a.artists.localeCompare(b.artists),
-        // multiple: 4,
-      },
+    //   sorter: {
+    //     compare: (a: TrackItem, b: TrackItem) => a.artists.localeCompare(b.artists),
+    //     // multiple: 4,
+    //   },
     },
     // {
     //   title: "Album",
@@ -157,10 +91,10 @@ const ResultTable = ({
       title: "Duration",
       dataIndex: "duration",
       key: "duration",
-      sorter: {
-        compare: (a: TrackItem, b: TrackItem) => a.duration - b.duration,
-        // multiple: 3,
-      },
+    //   sorter: {
+    //     compare: (a: TrackItem, b: TrackItem) => a.duration - b.duration,
+    //     // multiple: 3,
+    //   },
       render: (d: string, r: TrackItem) => millisToMinutesAndSeconds(r.duration),
     },
     {
@@ -169,65 +103,40 @@ const ResultTable = ({
       key: "tempo",
       render: (s: number) => (s ? s.toFixed(2) + " BPM" : "-"),
       width: 150,
-      sorter: {
-        compare: (a: TrackItem, b: TrackItem) => (a.tempo ?? 0) - (b.tempo ?? 0),
-        // multiple: 1,
-      },
+    //   sorter: {
+    //     compare: (a: TrackItem, b: TrackItem) => (a.tempo ?? 0) - (b.tempo ?? 0),
+    //     // multiple: 1,
+    //   },
     },
     {
       title: mapTitleToHelp("Key"),
       dataIndex: "toneKey",
       key: "toneKey",
       render: (s: number) => PitchClass.keyToPitchClass(s),
-      sorter: {
-        compare: (a: TrackItem, b: TrackItem) => (a.toneKey ?? 0) - (b.toneKey ?? 0),
-        // multiple: 2,
-      },
+    //   sorter: {
+    //     compare: (a: TrackItem, b: TrackItem) => (a.toneKey ?? 0) - (b.toneKey ?? 0),
+    //     // multiple: 2,
+    //   },
     },
     {
       title: mapTitleToHelp("Time signature", "time_signature"),
       dataIndex: "time_signature",
       key: "time_signature",
       render: (s: string) => (s ? s + "" : "-"),
-      sorter: (a: TrackItem, b: TrackItem) => (a.time_signature ?? 0) - (b.time_signature ?? 0),
+    //   sorter: (a: TrackItem, b: TrackItem) => (a.time_signature ?? 0) - (b.time_signature ?? 0),
     },
     {
       title: mapTitleToHelp("Mode"),
       dataIndex: "mode",
       key: "mode",
       render: (s: number) => (s === 1 ? "Major" : "Minor"),
-      sorter: (a: TrackItem, b: TrackItem) => (a.mode ?? 0) - (b.mode ?? 0),
-    },
-    {
-      title: mapTitleToHelp("Similarity"),
-      dataIndex: "overlapping",
-      key: "overlapping",
-      render: (s: number, r: TrackItem) => <SimilarProgress percent={parseFloat(s.toFixed(2))} />,
-      // defaultSortOrder: "descend",
-      sorter: {
-        defaultSortOrder: "descend",
-        compare: (a: TrackItem, b: TrackItem) => (a.overlapping ?? 0) > (b.overlapping ?? 0) ? -1 : 1,
-        // multiple: 5,
-      },
+    //   sorter: (a: TrackItem, b: TrackItem) => (a.mode ?? 0) - (b.mode ?? 0),
     },
     {
       title: "Action",
       key: "action",
       render: (text: string, record: TrackItem) => (
         <Space size="middle">
-          <Tooltip placement="top" title={"Play track (needs Spotify open and running)"}>
-            <a onClick={() => playSong(record.uri)}>
-              {/* <PlayCircleOutlined style={{ fontSize: "18px" }} /> */}
-              <FontAwesomeIcon icon={faPlay} size={"lg"} />
-            </a>
-          </Tooltip>
-          <Tooltip placement="top" title={"Add track to queue"}>
-            <a onClick={() => addToQueue(record.uri)}>
-              {/* <MenuUnfoldOutlined style={{ fontSize: "18px" }} /> */}
-              <FontAwesomeIcon icon={faBarsStaggered} size={"lg"} />
-            </a>
-          </Tooltip>
-
           <Tooltip placement="top" title={"Add track to seed search"}>
             <a onClick={() => addTrackToSeeds(record)} >
               {/* <PlusCircleOutlined style={{ fontSize: "18px" }} /> */}
@@ -235,12 +144,6 @@ const ResultTable = ({
               <FontAwesomeIcon icon={faPlusCircle} size={"lg"} />
             </a>
           </Tooltip>
-          <Tooltip placement="top" title={"Open in Spotify"}>
-            <a href={record.url} target="_blank" rel="noreferrer" style={{ color: "#1DB954" }}>
-              <FontAwesomeIcon icon={faSpotify} size={"lg"} />
-            </a>
-          </Tooltip>
-
         </Space>
       ),
     },
@@ -272,15 +175,17 @@ const ResultTable = ({
       message.warning("Only five artists, songs or genres can be selected");
     }
   };
+
   return (
     <Table
       columns={columns}
-      dataSource={data}
+      dataSource={data ?? []}
+      loading={data === null}
       showSorterTooltip={false}
       onRow={(record: TrackItem) => {
         return {
           onMouseEnter: () => {
-            setTableDetail((prev) => {
+            setGraphItem((prev) => {
 
               //loose reference to the object so we can update it
               let recordCopy = {
@@ -297,4 +202,4 @@ const ResultTable = ({
   );
 };
 
-export default ResultTable;
+export default MediaTable;

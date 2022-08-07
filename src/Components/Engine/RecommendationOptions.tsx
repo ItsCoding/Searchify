@@ -267,7 +267,7 @@ const RecomendationOptions = ({ setOptions, expanded, options }: RecomendationOp
   };
 
   const sortOptions = (a: string, b: string) => {
-    if (options[a]?.enabled && !options[b]?.enabled) {
+    if (a.toLocaleLowerCase() < b.toLocaleLowerCase()) {
       return -1;
     } else {
       return 1;
@@ -276,7 +276,6 @@ const RecomendationOptions = ({ setOptions, expanded, options }: RecomendationOp
     //   return 1;
     // }
   };
-
   return (
     <div id="recommendation_options">
       <Row gutter={16}>

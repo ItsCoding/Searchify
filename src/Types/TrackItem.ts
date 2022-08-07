@@ -1,3 +1,5 @@
+import SpotifyAudioAnalysis from "./SpotifyAudioAnalysis";
+
 type TrackItem = {
     title: string,
     artists: string,
@@ -17,7 +19,7 @@ type TrackItem = {
     fromHover?: boolean,
     overlapping?: number,
     artistIDs: string[]
-    [key: string]: string | number | boolean | undefined | string[];
+    [key: string]: string | number | boolean | undefined | string[] | SpotifyAudioAnalysis;
 }
 
 export default TrackItem;
